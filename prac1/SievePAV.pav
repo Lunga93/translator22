@@ -23,11 +23,11 @@
         i = i + 1;
       }
       i = 2;
-      int modulo;
+      bool modulo;
       while (i <= n) {                         /* the passes over the sieve */
-        modulo = primes - 8 * (primes / 8);
+        modulo = primes - 8 * (primes / 8) == 0;
         if (uncrossed[i-2]) {
-          if (display && ! modulo) { write("\n");  // ensure line not too long
+          if (modulo && display) { write("\n");  // ensure line not too long
           primes = primes + 1;
           if (display) write(i, "\t");
           k = i;                               // now cross out multiples of i
