@@ -27,7 +27,7 @@
       while (i <= n) {                         /* the passes over the sieve */
         modulo = primes - 8 * (primes / 8) == 0;
         if (uncrossed[i-2]) {
-          if (modulo && display) { write("\n");  // ensure line not too long
+          if (modulo && display) write("\n");  // ensure line not too long
           primes = primes + 1;
           if (display) write(i, "\t");
           k = i;                               // now cross out multiples of i
@@ -37,12 +37,11 @@
             uncrossed[k-2] = false;
             k = k + i;
           }
-          i = i + 1;
         }
+        i = i + 1;
       }
       it = it + 1;
       if (display) write("\n");
     }
     write(primes, " primes");
-  }
-} // Main
+  } // Main
