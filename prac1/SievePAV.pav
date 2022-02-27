@@ -6,7 +6,7 @@
     bool[] uncrossed = new bool[Max];          // the sieve
     int i, n, k, it, iterations, primes = 0;   // counters
     read("How many iterations? ", iterations);
-    bool display = iterations = 1;
+    bool display = iterations == 1;
     read("Supply largest number to be tested ", n);
     if (n > Max) {
       write("n too large, sorry");
@@ -14,8 +14,8 @@
     }
     write("Prime numbers between 2 and " , n, "\n");
     write("-----------------------------------\n");
-    it := 1;
-    while (it <= iterations) do {
+    it = 1;
+    while (it <= iterations) {
       primes = 0;
       i = 2;
       while (i <= n) {                         // clear sieve
@@ -23,21 +23,26 @@
         i = i + 1;
       }
       i = 2;
-      while (i <= n) {                         /* the passes over the sieve * /
+      int modulo;
+      while (i <= n) {                         /* the passes over the sieve */
+        modulo = primes - 8 * (primes / 8);
         if (uncrossed[i-2]) {
-          if (display && primes % 8 == 0) { write("\n");  // ensure line not too long
-          primes++;
+          if (display && ! modulo) { write("\n");  // ensure line not too long
+          primes = primes + 1;
           if (display) write(i, "\t");
           k = i;                               // now cross out multiples of i
-          do {
+          uncrossed[k-2] = false;
+          k = k + i;
+          while (k <= n) {
             uncrossed[k-2] = false;
-            k += i;
-          } while (k <= n);
+            k = k + i;
+          }
           i = i + 1;
         }
       }
-      it++;
+      it = it + 1;
       if (display) write("\n");
     }
-    write(primes, ' primes');
-  } // Main
+    write(primes, " primes");
+  }
+} // Main
