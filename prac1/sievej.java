@@ -1,15 +1,23 @@
 import library.*;
 
 class sievej {
-  
+
   static public void main(String[] args) {
     final int Max = 49000;
     boolean[] Uncrossed = new boolean[Max];
     int i, n, k, it, iterations, primes = 0;
-    { IO.write("How many iterations? "); iterations = IO.readInt(); }
-    { IO.write("Supply largest number to be tested "); n = IO.readInt(); }
+    {
+      IO.write("How many iterations? ");
+      iterations = IO.readInt();
+    }
+    {
+      IO.write("Supply largest number to be tested ");
+      n = IO.readInt();
+    }
     if (n > Max) {
-      { IO.write("n too large, sorry"); }
+      {
+        IO.write("n too large, sorry");
+      }
       return;
     }
     it = 1;
@@ -36,7 +44,10 @@ class sievej {
       }
       it = it + 1;
     }
-    { IO.write(primes); IO.write(" primes"); }
+    {
+      IO.write(primes);
+      IO.write(" primes");
+    }
   } // main
-  
+
 } // sievej
