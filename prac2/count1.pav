@@ -1,0 +1,27 @@
+void main() {
+// Read a list of positive numbers and determine the frequency
+// of occurrence of each
+// P.D. Terry, Rhodes University, 2013
+  const
+    limit = 2000;
+  int
+    item;                             // data item
+  int[]
+    count = new int[limit];           // the number of times each appears
+  int i = 0;                          // loop to clear counts
+  while (i < limit) {
+    count[i] = 0;
+    i = i + 1;
+  }
+  read("First number? ", item);
+  while (item > 0) {                  // terminate input with a result <= 0
+    if (item < limit)                 // if in range
+      count[item] = count[item] + 1;  // increment appropriate count
+    read("Next number (<= 0 stops) ", item);
+  }
+  i = 0;                              // loop to output numbers and counts
+  while (i < limit) {
+    if (count[i] > 0) write(i, count[i], "\n");
+    i = i + 1;
+  }
+}

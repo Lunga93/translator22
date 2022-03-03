@@ -1,0 +1,17 @@
+ ;; test for INPC, PRNC and CAP opcode
+ 
+	0   DSP       	2     	;  X = var 0; Y = var 1;
+	2   LDA       	0     	;
+	4   INPC           		;    read(X); 
+	5   LDA       	1     	;   Y = cap(X); 
+	7	LDA			0
+	9	LDV
+	10 	CAP
+	11 	STO
+	12  LDA 0             ;    print (x)
+	14	LDV
+	15  PRNC            
+ 	16 	LDA 1             ;    print (y)
+	18	LDV
+	19  PRNC            
+	20  HALT            ; System.Exit()

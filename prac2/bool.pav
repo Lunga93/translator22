@@ -1,0 +1,23 @@
+void main () {
+/* This won't compile, but the idea should be obvious
+   P.D. Terry, Rhodes University, 2013 */
+
+  bool X, Y, Z;
+
+  write("   X     Y     Z     X OR !Y AND Z\n");
+  X = false;
+  repeat
+    Y = false;
+    repeat
+      Z = false;
+      repeat
+        write(X, Y, Z, X || !Y && Z, "\n");
+        Z = ! Z;
+      until (!Z); // again
+      Y = ! Y;
+    until (!Y); // again
+    X = ! X;
+  until (!X); // again
+}
+
+
