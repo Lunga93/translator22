@@ -1,0 +1,3 @@
+we know it is not short circuit because in memory location
+41 and 42 we can see that it checks all of the subexpressions
+at the same time.

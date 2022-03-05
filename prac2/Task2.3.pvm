@@ -1,0 +1,69 @@
+   0   DSP      3  ;reserve 3 variables X, Y, Z 
+   2   PRNS     "   X     Y     Z     X OR !Y AND Z\n"   ;write out line
+   4   LDA      0   
+   6   LDC      0   
+   8   STO          ;X=false 
+   9   LDA      1  
+  11   LDC      0   
+  13   STO          ;Y=false 
+  14   LDA      2   
+  16   LDC      0   
+  18   STO          ;Z=false 
+  19   LDA      0   
+  21   LDV          
+  22   PRNB         
+  23   LDA      1   
+  25   LDV          
+  26   PRNB         
+  27   LDA      2   
+  29   LDV          
+  30   PRNB    
+
+  31   LDA      0   
+  33   LDV
+  34   BZE      40
+  36   LDC      1
+  38   BRN      57  
+  
+  40   LDA      1
+  42   LDV      
+  43   NOT      
+  44   BZE      55
+  46   LDA      2
+  48   LDV
+  49   BZE      55
+  51   LDC      1
+  53   BRN      57
+
+  55   LDC      0
+  57   PRNB			; write(X, Y, Z, X || !Y && Z)
+
+  58   PRNS     "\n" ; write ("\n")
+  60   LDA      2
+  62   LDA      2
+  63   LDV
+  64   NOT  
+  65   STO         ;Z = !Z (Z=True)
+  66   LDA      2
+  68   LDV
+  69   NOT
+  70   BZE      19  ;until (!Z); // again 
+  72   LDA      1
+  74   LDA      1
+  75   LDV
+  76   NOT
+  77   STO          ;Y = ! Y;
+  78   LDA      1
+  80   LDV
+  81   NOT
+  82   BZE      14  ;until (!Y); // again
+  84   LDA      0
+  86   LDA      0
+  88   LDV
+  89   NOT        
+  90   STO       ;  X = ! X;
+  91   LDA      0
+  93   LDV
+  94   NOT       ;until (!X)
+  95   BZE      9
+  97   HALT
