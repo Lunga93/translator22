@@ -1,0 +1,87 @@
+0   DSP     4       ; const limit; int item, i; int[] count
+2   LDA     0
+4   LDC     2000
+6   STO             ; limit = 2000
+7   LDA     2
+9   LDC     0
+11  STO             ; int i = 0
+12  LDA     3
+14  LDA     0
+16  LDV
+17  ANEW            ; int[] count = new int[limit]
+18  LDA     2
+20  LDV
+21  LDA     0
+23  LDV
+24  CLT
+25  BZE     46
+27  LDA     3
+29  LDV
+30  LDA     2
+32  LDV
+33  LDXA
+34  LDC     0
+36  STO
+37  LDA     2
+39  LDV
+40  LDC     1
+42  ADD
+43  STO
+44  BRN     18
+46  PRNS    "first number"
+48  LDA     1
+50  INPI
+51  LDA     1
+53  LDV
+54  LDC     0
+56  CGT
+57  BZE     89
+59  LDA     1
+61  LDV
+62  LDA     0
+64  LDV
+65  CLT
+66  BZE     87
+68  LDA     1
+70  LDV
+71  LDA     0
+73  LDV
+74  CLT
+75  LDA     3
+77  LDV
+78  LDA     1
+80  LDV
+81  LDXA
+82  LDV
+83  LDC     1
+85  ADD
+86  STO
+87  PRNS    "Next number (<= 0 stops) "
+89  LDA     1
+91  INPI
+92  STO
+93  LDA     2
+95  LDC     0
+97  STO
+98  LDA     2
+100 LDV
+101 LDA     0
+103 LDV
+104 CLT
+105 BZE    129 
+107 LDA     3
+109 LDV
+110 LDA     2
+112 LDV
+113 LDXA
+114 LDV
+115 LDC     0
+117 CLT
+118 BZE     120
+120 PRNS    "WE HERE BABY"
+122 LDA     2
+124 LDV
+125 LDC     1
+127 ADD
+128 STO
+129 HALT
