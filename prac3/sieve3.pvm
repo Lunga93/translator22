@@ -1,0 +1,75 @@
+   0   DSP      5
+   2   LDC      4000         ; max number to be tested
+   4   LDC_1
+   5   ADD
+   6   ANEW
+   7   STL_0
+   8   LDC_1
+   9   STL_3
+  10   LDC_0
+  11   STL      4
+  13   LDL_3
+  14   LDC      100          ; number of iterations
+  16   CLE
+  17   BZE      90
+  19   LDC_0
+  20   STL      4
+  22   LDC_2
+  23   STL_1
+  24   LDL_1
+  25   LDC      4000         ; max number to be tested
+  27   CLE
+  28   BZE      39
+  30   LDL_0
+  31   LDL_1
+  32   LDXA
+  33   LDC_1
+  34   STO
+  35   LDA_1
+  36   INC
+  37   BRN      24
+  39   LDC_2
+  40   STL_1
+  41   LDL_1
+  42   LDC      4000         ; max number to be tested
+  44   CLE
+  45   BZE      86
+  47   LDL_0
+  48   LDL_1
+  49   LDXA
+  50   LDV
+  51   BZE      82
+  53   LDL      4
+  55   LDC_1
+  56   ADD
+  57   STL      4
+  59   LDL_1
+  60   STL_2
+  61   LDL_2
+  62   LDC      4000         ; max number to be tested
+  64   CLE
+  65   LDL_2
+  66   LDC_0
+  67   CGT
+  68   AND
+  69   BZE      82
+  71   LDL_0
+  72   LDL_2
+  73   LDXA
+  74   LDC_0
+  75   STO
+  76   LDL_2
+  77   LDL_1
+  78   ADD
+  79   STL_2
+  80   BRN      61
+  82   LDA_1
+  83   INC
+  84   BRN      41
+  86   LDA_3
+  87   INC
+  88   BRN      13
+  90   LDL      4
+  92   PRNI
+  93   PRNS     " primes"
+  95   HALT

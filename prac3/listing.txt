@@ -1,0 +1,21 @@
+
+   1 COMPILER Calc  $CN
+   2 /* Simple arithmetic calculator
+   3    P.D. Terry, Rhodes University extended by KB 2021 */
+   4 
+   5 CHARACTERS
+   6   digit      = "0123456789" .
+   7 
+   8 TOKENS
+   9   decNumber  = digit { digit } .
+  10 
+  11 IGNORE CHR(0) .. CHR(31)
+  12 
+  13 PRODUCTIONS
+  14   Calc       = { Expression "=" } EOF .
+  15   Expression = Term { "+" Term  |  "-" Term } .
+  16   Term       = Factor { "*" Factor |  "/" Factor | "%" Factor } .
+  17   Factor     = decNumber  .
+  18 END Calc.
+
+0 errors detected

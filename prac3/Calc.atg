@@ -1,0 +1,18 @@
+COMPILER Calc  $CN
+/* Simple arithmetic calculator
+   P.D. Terry, Rhodes University extended by KB 2021 */
+
+CHARACTERS
+  digit      = "0123456789" .
+
+TOKENS
+  decNumber  = digit { digit } .
+
+IGNORE CHR(0) .. CHR(31)
+
+PRODUCTIONS
+  Calc       = { Expression "=" } EOF .
+  Expression = Term { "+" Term  |  "-" Term } .
+  Term       = Factor { "*" Factor |  "/" Factor | "%" Factor } .
+  Factor     = decNumber  .
+END Calc.

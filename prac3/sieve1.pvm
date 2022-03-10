@@ -1,0 +1,112 @@
+   0   DSP      5
+   2   LDA      0
+   4   LDC      4000         ; max number to be tested
+   6   LDC      1
+   8   ADD
+   9   ANEW
+  10   STO
+  11   LDA      3
+  13   LDC      1
+  15   STO
+  16   LDA      4
+  18   LDC      0
+  20   STO
+  21   LDA      3
+  23   LDV
+  24   LDC      100          ; number of iterations
+  26   CLE
+  27   BZE      165
+  29   LDA      4
+  31   LDC      0
+  33   STO
+  34   LDA      1
+  36   LDC      2
+  38   STO
+  39   LDA      1
+  41   LDV
+  42   LDC      4000         ; max number to be tested
+  44   CLE
+  45   BZE      68
+  47   LDA      0
+  49   LDV
+  50   LDA      1
+  52   LDV
+  53   LDXA
+  54   LDC      1
+  56   STO
+  57   LDA      1
+  59   LDA      1
+  61   LDV
+  62   LDC      1
+  64   ADD
+  65   STO
+  66   BRN      39
+  68   LDA      1
+  70   LDC      2
+  72   STO
+  73   LDA      1
+  75   LDV
+  76   LDC      4000         ; max number to be tested
+  78   CLE
+  79   BZE      154
+  81   LDA      0
+  83   LDV
+  84   LDA      1
+  86   LDV
+  87   LDXA
+  88   LDV
+  89   BZE      143
+  91   LDA      4
+  93   LDA      4
+  95   LDV
+  96   LDC      1
+  98   ADD
+  99   STO
+ 100   LDA      2
+ 102   LDA      1
+ 104   LDV
+ 105   STO
+ 106   LDA      2
+ 108   LDV
+ 109   LDC      4000         ; max number to be tested
+ 111   CLE
+ 112   LDA      2
+ 114   LDV
+ 115   LDC      0
+ 117   CGT
+ 118   AND
+ 119   BZE      143
+ 121   LDA      0
+ 123   LDV
+ 124   LDA      2
+ 126   LDV
+ 127   LDXA
+ 128   LDC      0
+ 130   STO
+ 131   LDA      2
+ 133   LDA      2
+ 135   LDV
+ 136   LDA      1
+ 138   LDV
+ 139   ADD
+ 140   STO
+ 141   BRN      106
+ 143   LDA      1
+ 145   LDA      1
+ 147   LDV
+ 148   LDC      1
+ 150   ADD
+ 151   STO
+ 152   BRN      73
+ 154   LDA      3
+ 156   LDA      3
+ 158   LDV
+ 159   LDC      1
+ 161   ADD
+ 162   STO
+ 163   BRN      21
+ 165   LDA      4
+ 167   LDV
+ 168   PRNI
+ 169   PRNS     " primes"
+ 171   HALT
