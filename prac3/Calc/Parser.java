@@ -6,19 +6,25 @@ import java.io.*;
 public class Parser {
 	public static final int _EOF = 0;
 	public static final int _decNumber = 1;
+	public static final int _hexNumber = 2;
 	// terminals
 	public static final int EOF_SYM = 0;
 	public static final int decNumber_Sym = 1;
-	public static final int equal_Sym = 2;
-	public static final int plus_Sym = 3;
-	public static final int minus_Sym = 4;
-	public static final int star_Sym = 5;
-	public static final int slash_Sym = 6;
-	public static final int percent_Sym = 7;
-	public static final int NOT_SYM = 8;
+	public static final int hexNumber_Sym = 2;
+	public static final int equal_Sym = 3;
+	public static final int lparen_Sym = 4;
+	public static final int rparen_Sym = 5;
+	public static final int plus_Sym = 6;
+	public static final int minus_Sym = 7;
+	public static final int uparrow_Sym = 8;
+	public static final int sqrt_Sym = 9;
+	public static final int star_Sym = 10;
+	public static final int slash_Sym = 11;
+	public static final int percent_Sym = 12;
+	public static final int NOT_SYM = 13;
 	// pragmas
 
-	public static final int maxT = 8;
+	public static final int maxT = 13;
 
 	static final boolean T = true;
 	static final boolean x = false;
@@ -103,7 +109,7 @@ public class Parser {
 	}
 
 	static void Calc() {
-		while (la.kind == decNumber_Sym) {
+		while (StartOf(1)) {
 			Expression();
 			Expect(equal_Sym);
 		}
@@ -111,16 +117,56 @@ public class Parser {
 	}
 
 	static void Expression() {
-		Term();
-		while (la.kind == plus_Sym || la.kind == minus_Sym) {
-			if (la.kind == plus_Sym) {
-				Get();
-				Term();
-			} else {
-				Get();
-				Term();
+		if (la.kind == lparen_Sym) {
+			Get();
+			Expression();
+			Expect(rparen_Sym);
+			while (la.kind == plus_Sym || la.kind == minus_Sym || la.kind == uparrow_Sym) {
+				if (la.kind == plus_Sym) {
+					Get();
+					if (la.kind == decNumber_Sym || la.kind == hexNumber_Sym) {
+						Term();
+					} else if (StartOf(1)) {
+						Expression();
+					} else SynErr(14);
+				} else if (la.kind == minus_Sym) {
+					Get();
+					if (la.kind == decNumber_Sym || la.kind == hexNumber_Sym) {
+						Term();
+					} else if (StartOf(1)) {
+						Expression();
+					} else SynErr(15);
+				} else {
+					Get();
+					Expression();
+				}
 			}
-		}
+		} else if (la.kind == decNumber_Sym || la.kind == hexNumber_Sym) {
+			Term();
+			while (la.kind == plus_Sym || la.kind == minus_Sym || la.kind == uparrow_Sym) {
+				if (la.kind == plus_Sym) {
+					Get();
+					if (la.kind == decNumber_Sym || la.kind == hexNumber_Sym) {
+						Term();
+					} else if (StartOf(1)) {
+						Expression();
+					} else SynErr(16);
+				} else if (la.kind == minus_Sym) {
+					Get();
+					if (la.kind == decNumber_Sym || la.kind == hexNumber_Sym) {
+						Term();
+					} else if (StartOf(1)) {
+						Expression();
+					} else SynErr(17);
+				} else {
+					Get();
+					Expression();
+				}
+			}
+		} else if (la.kind == sqrt_Sym) {
+			Get();
+			Expression();
+		} else SynErr(18);
 	}
 
 	static void Term() {
@@ -128,7 +174,11 @@ public class Parser {
 		while (la.kind == star_Sym || la.kind == slash_Sym || la.kind == percent_Sym) {
 			if (la.kind == star_Sym) {
 				Get();
-				Factor();
+				if (la.kind == decNumber_Sym || la.kind == hexNumber_Sym) {
+					Factor();
+				} else if (StartOf(1)) {
+					Expression();
+				} else SynErr(19);
 			} else if (la.kind == slash_Sym) {
 				Get();
 				Factor();
@@ -140,7 +190,11 @@ public class Parser {
 	}
 
 	static void Factor() {
-		Expect(decNumber_Sym);
+		if (la.kind == decNumber_Sym) {
+			Get();
+		} else if (la.kind == hexNumber_Sym) {
+			Get();
+		} else SynErr(20);
 	}
 
 
@@ -155,7 +209,8 @@ public class Parser {
 	}
 
 	private static boolean[][] set = {
-		{T,x,x,x, x,x,x,x, x,x}
+		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,T,x, T,x,x,x, x,T,x,x, x,x,x}
 
 	};
 
@@ -279,13 +334,25 @@ class Errors {
 		switch (n) {
 			case 0: s = "EOF expected"; break;
 			case 1: s = "decNumber expected"; break;
-			case 2: s = "\"=\" expected"; break;
-			case 3: s = "\"+\" expected"; break;
-			case 4: s = "\"-\" expected"; break;
-			case 5: s = "\"*\" expected"; break;
-			case 6: s = "\"/\" expected"; break;
-			case 7: s = "\"%\" expected"; break;
-			case 8: s = "??? expected"; break;
+			case 2: s = "hexNumber expected"; break;
+			case 3: s = "\"=\" expected"; break;
+			case 4: s = "\"(\" expected"; break;
+			case 5: s = "\")\" expected"; break;
+			case 6: s = "\"+\" expected"; break;
+			case 7: s = "\"-\" expected"; break;
+			case 8: s = "\"^\" expected"; break;
+			case 9: s = "\"sqrt\" expected"; break;
+			case 10: s = "\"*\" expected"; break;
+			case 11: s = "\"/\" expected"; break;
+			case 12: s = "\"%\" expected"; break;
+			case 13: s = "??? expected"; break;
+			case 14: s = "invalid Expression"; break;
+			case 15: s = "invalid Expression"; break;
+			case 16: s = "invalid Expression"; break;
+			case 17: s = "invalid Expression"; break;
+			case 18: s = "invalid Expression"; break;
+			case 19: s = "invalid Term"; break;
+			case 20: s = "invalid Factor"; break;
 			default: s = "error " + n; break;
 		}
 		storeError(line, col, s);
