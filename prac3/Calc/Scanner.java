@@ -74,12 +74,12 @@ public class Scanner {
 	static final int decNumber_Sym = 1;
 	static final int hexNumber_Sym = 2;
 	static final int equal_Sym = 3;
-	static final int lparen_Sym = 4;
-	static final int rparen_Sym = 5;
-	static final int plus_Sym = 6;
-	static final int minus_Sym = 7;
-	static final int uparrow_Sym = 8;
-	static final int sqrt_Sym = 9;
+	static final int plus_Sym = 4;
+	static final int minus_Sym = 5;
+	static final int sqrt_Sym = 6;
+	static final int lparen_Sym = 7;
+	static final int rparen_Sym = 8;
+	static final int uparrow_Sym = 9;
 	static final int star_Sym = 10;
 	static final int slash_Sym = 11;
 	static final int percent_Sym = 12;
@@ -89,12 +89,12 @@ public class Scanner {
 	static short[] start = {
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0, 18,  0,  0,  7,  8, 16,  9,  0, 10,  0, 17,
+	  0,  0,  0,  0,  0, 18,  0,  0, 13, 14, 16,  7,  0,  8,  0, 17,
 	  4,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  6,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 11,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 15,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0, 12,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	  0,  0,  0,  9,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -220,26 +220,26 @@ public class Scanner {
 				case 6:
 					{ t.kind = equal_Sym; done = true; break; }
 				case 7:
-					{ t.kind = lparen_Sym; done = true; break; }
-				case 8:
-					{ t.kind = rparen_Sym; done = true; break; }
-				case 9:
 					{ t.kind = plus_Sym; done = true; break; }
-				case 10:
+				case 8:
 					{ t.kind = minus_Sym; done = true; break; }
+				case 9:
+					if (ch == 'q') { buf.append(ch); NextCh(); state = 10; break;}
+					else { t.kind = noSym; done = true; break; }
+				case 10:
+					if (ch == 'r') { buf.append(ch); NextCh(); state = 11; break;}
+					else { t.kind = noSym; done = true; break; }
 				case 11:
-					{ t.kind = uparrow_Sym; done = true; break; }
+					if (ch == 't') { buf.append(ch); NextCh(); state = 12; break;}
+					else { t.kind = noSym; done = true; break; }
 				case 12:
-					if (ch == 'q') { buf.append(ch); NextCh(); state = 13; break;}
-					else { t.kind = noSym; done = true; break; }
-				case 13:
-					if (ch == 'r') { buf.append(ch); NextCh(); state = 14; break;}
-					else { t.kind = noSym; done = true; break; }
-				case 14:
-					if (ch == 't') { buf.append(ch); NextCh(); state = 15; break;}
-					else { t.kind = noSym; done = true; break; }
-				case 15:
 					{ t.kind = sqrt_Sym; done = true; break; }
+				case 13:
+					{ t.kind = lparen_Sym; done = true; break; }
+				case 14:
+					{ t.kind = rparen_Sym; done = true; break; }
+				case 15:
+					{ t.kind = uparrow_Sym; done = true; break; }
 				case 16:
 					{ t.kind = star_Sym; done = true; break; }
 				case 17:

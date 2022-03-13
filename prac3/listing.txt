@@ -1,10 +1,26 @@
+  LL1 warning in Expression: "+" is the start & successor of a deletable structure
+  LL1 warning in Expression: "-" is the start & successor of a deletable structure
 
-   1 1^2 + 2^2 =
-   2 3 * 6 - 2 =
-   3 4 % 2 =
-   4 3^2 =
-   5 (5^2) + 0ABH =
-   6 0ABH + (5^2) =
-   7 3 + sqrt(4 * (6 + 5)) + (5^2) + 0ABH =
+   1 COMPILER Calc  $CN
+   2 /* Simple arithmetic calculator
+   3    P.D. Terry, Rhodes University extended by KB 2021 */
+   4 
+   5 CHARACTERS
+   6   digit      = "0123456789" .
+   7   hexdigit   = digit + "ABCDEF" .
+   8 
+   9 TOKENS
+  10   decNumber  = digit { digit } .
+  11   hexNumber  = "0" hexdigit { hexdigit } "H" .
+  12 
+  13 IGNORE CHR(0) .. CHR(31)
+  14 
+  15 PRODUCTIONS
+  16   Calc       = { Expression "=" } EOF .
+  17   Expression = Term { "+" Expression  |  "-" Expression } | "sqrt" "(" Expression ")" | "^" Expression .
+  18   Term       = Factor { "*" Factor |  "/" Factor | "%" Factor } .
+  19   Factor     = decNumber | hexNumber | "(" Expression ")" .
+  20 END Calc.
 
 0 errors detected
+2 warnings detected
