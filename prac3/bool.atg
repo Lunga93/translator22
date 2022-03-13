@@ -1,0 +1,15 @@
+COMPILER Calc  $CN
+
+
+
+CHARACTERS
+    alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFFGHIJKLMNOPQRSTUVWXYZ" .
+
+TOKENS
+    letters = alphabet { alphabet } .
+
+PRODUCTIONS
+    bool = { letters = Expression } EOF .
+    Expression = 
+    Term =
+    Factor = 
