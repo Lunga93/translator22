@@ -72,7 +72,7 @@ BEGIN
   {  105 } LDA      0
   {  107 } LDV     
   {  108 } CLT     
-  {  109 } BZE      137
+  {  109 } BZE      152
   {  111 } LDA      3
   {  113 } LDV     
   {  114 } LDA      2
@@ -81,14 +81,25 @@ BEGIN
   {  118 } LDV     
   {  119 } LDC      0
   {  121 } CGT     
-  {  122 } BZE      126
-  {  124 } PRNS     "I, COUNT I"
-  {  126 } LDA      2
-  {  128 } LDA      2
-  {  130 } LDV     
-  {  131 } LDC      1
-  {  133 } ADD     
-  {  134 } STO     
-  {  135 } BRN      102
-  {  137 } HALT    
+  {  122 } BZE      141
+  {  124 } LDA      2
+  {  126 } LDV     
+  {  127 } PRNI    
+  {  128 } PRNS     " "
+  {  130 } LDA      3
+  {  132 } LDV     
+  {  133 } LDA      2
+  {  135 } LDV     
+  {  136 } LDXA    
+  {  137 } LDV     
+  {  138 } PRNI    
+  {  139 } PRNS     "\n"
+  {  141 } LDA      2
+  {  143 } LDA      2
+  {  145 } LDV     
+  {  146 } LDC      1
+  {  148 } ADD     
+  {  149 } STO     
+  {  150 } BRN      102
+  {  152 } HALT    
 END.

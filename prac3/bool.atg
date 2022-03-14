@@ -1,15 +1,23 @@
-COMPILER Calc  $CN
+COMPILER bool  $CN
 
 
 
 CHARACTERS
-    alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFFGHIJKLMNOPQRSTUVWXYZ" .
+    letters = "abcdefghijklmnopqrstuvwxyzABCDEFFGHIJKLMNOPQRSTUVWXYZ" .
 
 TOKENS
-    letters = alphabet { alphabet } .
+    Letter = letters .
+
+
+IGNORE CHR(0) .. CHR(31)
+
 
 PRODUCTIONS
-    bool = { letters = Expression } EOF .
-    Expression = 
-    Term =
-    Factor = 
+    bool = { Letter "=" Expression ";" } EOF .
+    Expression = Term { "and" Term | "&&" Term } .
+    Term = Factor { "or" Factor | "||" Factor } .
+    Factor = trueOrfalse | Letter | "(" Expression ")" |
+            { "!" } { "not" } { trueOrfalse | Letter} .
+    trueOrfalse = "true" | "false" .
+
+END bool.

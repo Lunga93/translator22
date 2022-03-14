@@ -1,0 +1,18 @@
+ASSEM
+BEGIN
+  {    0 } DSP      2
+  {    2 } LDA      0
+  {    4 } INPC    
+  {    5 } LDA      1
+  {    7 } LDA      0
+  {    9 } LDV     
+  {   10 } CAP     
+  {   11 } STO     
+  {   12 } LDA      0
+  {   14 } LDV     
+  {   15 } PRNC    
+  {   16 } LDA      1
+  {   18 } LDV     
+  {   19 } PRNC    
+  {   20 } HALT    
+END.

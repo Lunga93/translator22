@@ -1,0 +1,96 @@
+
+  0 DSP      4     ;const limit; char ch, i; int[] count
+  2 LDA      0
+  4 LDC      2000
+  6 STO     
+  7 LDA      2
+  9 LDC      0
+ 11 STO           ; int i = 0;  
+ 12 LDA      3
+ 14 LDA      0
+ 16 LDV     
+ 17 ANEW          ; int[] count = new int[limit]
+ 18 STO     
+ 19 LDA      2
+ 21 LDV     
+ 22 LDA      0
+ 24 LDV     
+ 25 CLT     
+ 26 BZE      49   ; while (i < limit)
+ 28 LDA      3
+ 30 LDV     
+ 31 LDA      2
+ 33 LDV     
+ 34 LDXA    
+ 35 LDC      0
+ 37 STO           ;  count[1] = 0
+ 38 LDA      2
+ 40 LDA      2
+ 42 LDV     
+ 43 LDC      1
+ 45 ADD     
+ 46 STO           ; i = i + 1
+ 47 BRN      19
+ 49 PRNS     "FIRST character?"
+ 51 LDA      1
+ 53 INPC          ; read("First character? ", ch);
+ 54 LDA      1
+ 56 LDV     
+ 57 LDC      46
+ 59 CNE           ; while (ch != ".")
+ 60 BZE      87
+ 62 LDA      3
+ 64 LDV     
+ 65 LDA      1
+ 67 LDV     
+ 68 CAP     
+ 69 LDXA    
+ 70 LDA      3
+ 72 LDV     
+ 73 LDA      1
+ 75 LDV     
+ 76 CAP     
+ 77 LDXA    
+ 78 LDV     
+ 79 LDC      1
+ 81 ADD     
+ 82 STOC           ; count[CH] = count[CH] + 1
+ 83 PRNS     "Next character (== . )"    ; read("Next number (== . stops) ", item)
+ 85 BRN      51
+ 87 LDA      1
+ 89 LDC      65
+ 91 STOC           ; ch = 'A'
+ 92 LDA      1
+ 94 LDV     
+ 95 LDC      90
+ 97  CLE          ; while (ch <= 'Z')
+ 98  BZE      141
+100  LDA      3
+102  LDV     
+103  LDA      1
+105  LDV     
+106  LDXA    
+107  LDV     
+108  LDC      0
+110  CGT          ; if (count[ch] > 0)
+111  BZE      130
+113  LDA      2
+115  LDV     
+116  PRNC         ; write(ch)
+117  PRNS     " "
+119  LDA      3
+121  LDV     
+122  LDA      1
+124  LDV     
+125  LDXA    
+126  LDV     
+127  PRNC         ; write(count[ch])
+128  PRNS     "\n"
+130  LDA      1
+132  LDA      1
+134  LDV     
+135  LDC      1
+137  ADD     
+138  STOC         ; ch = (char) (ch + 1);
+139  BRN      92
+141  HALT    

@@ -1,0 +1,23 @@
+COMPILER Staff $CN
+
+CHARACTERS
+    lcase 	= 'a' .. 'z' .
+    ucase 	= 'A' .. 'Z' .
+    letters 	= lcase + ucase .
+
+
+TOKENS
+    name = ucase { letters } .
+    initial = ucase "." { ucase "." } .
+
+
+IGNORE CHR(0) .. CHR(31)
+
+PRODUCTIONS
+    Staff =  { Sentence "." } EOF .
+    Sentence = initial [ Sentence ] | Title [ Sentence ] 
+                | name { name } { "," Qualifications } .
+    Title = "Mr" | "Ms" | "Professor" | "Dr" | "Prof" .
+    Qualifications = ( "MSc" | "BSc" | "PhD" ) [ "(Hons)" ] .
+
+END Staff.
