@@ -314,6 +314,8 @@ class PVM {
         case PVM.ldc: // push constant value
           push(next());
           break;
+
+          // I push constants 0 and 1
         case PVM.ldc_0:
           push(0);
           break;
@@ -325,6 +327,8 @@ class PVM {
           if (inBounds(adr))
             push(adr);
           break;
+
+          //added opcodes to push local address of 0 and 1
         case PVM.lda_0:
           adr = cpu.fp - 1;
           if (inBounds(adr))
@@ -337,6 +341,12 @@ class PVM {
           break;
         case PVM.ldv: // dereference
           push(mem[pop()]);
+          break;
+
+        //added opcodes to push local value
+        case PVM.ldl:
+          adr = cpu.fp - 1 - next();
+          if (inBounds(adr)) push(mem[adr]);
           break;
         case PVM.ldl_0:
           adr = cpu.fp - 1;
@@ -356,6 +366,31 @@ class PVM {
           if (inBounds(adr))
             mem[adr] = tos;
           break;
+
+          // added opcode to store local value
+        case PVM.stl:
+          tos = pop();
+          adr = cpu.fp - 1 - next();
+          if (inBounds(adr))
+            mem[adr] = tos;
+          break;
+
+        case PVM.stl_0:         // pop to local variable 0
+          adr = cpu.fp - 1;
+          if (inBounds(adr)) mem[adr] = pop();
+          break;
+        case PVM.stl_1:         // pop to local variable 1
+          adr = cpu.fp - 2;
+          if (inBounds(adr)) mem[adr] = pop();
+          break;
+
+        case PVM.stlc:          // character checked pop to local variable
+          tos = pop(); adr = cpu.fp - 1 - next();
+          if (inBounds(adr))
+            if (tos >= 0 && tos <= maxChar) mem[adr] = tos;
+            else ps = badVal;
+          break;
+
         case PVM.ldxa: // heap array indexing
           adr = pop();
           int heapPtr = pop();
