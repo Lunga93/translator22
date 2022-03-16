@@ -1,0 +1,78 @@
+ASSEM
+BEGIN
+  {    0 } DSP      5
+  {    2 } LDC      4000
+  {    4 } LDC      1
+  {    6 } ADD     
+  {    7 } ANEW    
+  {    8 } STL     
+  {    9 } LDC      1
+  {   11 } STL     
+  {   12 } LDC      0
+  {   14 } STL     
+  {   15 } LDL     
+  {   16 } LDC      100
+  {   18 } CLE     
+  {   19 } BZE      123
+  {   21 } LDC      0
+  {   23 } STL     
+  {   24 } LDC      2
+  {   26 } STL     
+  {   27 } LDL     
+  {   28 } LDC      4000
+  {   30 } CLE     
+  {   31 } BZE      53
+  {   33 } LDL     
+  {   34 } LDL     
+  {   35 } LDXA    
+  {   36 } LDC      1
+  {   38 } STO     
+  {   39 } LDA      1
+  {   41 } INC     
+  {   42 } BRN      33
+  {   44 } LDC      2
+  {   46 } STL     
+  {   47 } LDL     
+  {   48 } LDC      4000
+  {   50 } CLE     
+  {   51 } BZE      118
+  {   53 } LDL     
+  {   54 } LDL     
+  {   55 } LDXA    
+  {   56 } LDV     
+  {   57 } BZE      113
+  {   59 } LDL     
+  {   60 } LDC      1
+  {   62 } ADD     
+  {   63 } STL     
+  {   64 } LDL     
+  {   65 } STL     
+  {   66 } LDL     
+  {   67 } LDC      4000
+  {   69 } CLE     
+  {   70 } LDL     
+  {   71 } LDC      0
+  {   73 } CGT     
+  {   74 } AND     
+  {   75 } BZE      113
+  {   77 } LDL     
+  {   78 } LDL     
+  {   79 } LDXA    
+  {   80 } LDC      0
+  {   82 } STO     
+  {   83 } LDL     
+  {   84 } LDL     
+  {   85 } ADD     
+  {   86 } STL     
+  {   87 } BRN      83
+  {   89 } LDA      1
+  {   91 } INC     
+  {   92 } BRN      57
+  {   94 } LDA      3
+  {   96 } INC     
+  {   97 } BRN      18
+  {   99 } LDL     
+  {  100 } PRNI    
+  {  101 } PRNS     " primes"
+  {  103 } HALT    
+END.
