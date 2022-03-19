@@ -437,52 +437,62 @@ import library.*;
 		  case PVM.heap:           // heap dump (debugging)
             heapDump(results, pcNow);
             break;
-//++
-          case PVM.ldc_0:         // push constant 0
+
+
+
+
+//++ enhanced opcodes added over here
+
+            //adding constants
+          case PVM.ldc_0:        
             push(0);
             break;
-          case PVM.ldc_1:         // push constant 1
+          case PVM.ldc_1:         
             push(1);
             break;
-          case PVM.ldc_2:         // push constant 2
+          case PVM.ldc_2:         
             push(2);
             break;
-          case PVM.ldc_3:         // push constant 3
+          case PVM.ldc_3:         
             push(3);
             break;
-          case PVM.lda_0:         // push local address 0
+
+            //push local addresses
+          case PVM.lda_0:         
             adr = cpu.fp - 1;
             if (inBounds(adr)) push(adr);
             break;
-          case PVM.lda_1:         // push local address 1
+          case PVM.lda_1:         
             adr = cpu.fp - 2;
             if (inBounds(adr)) push(adr);
             break;
-          case PVM.lda_2:         // push local address 2
+          case PVM.lda_2:        
             adr = cpu.fp - 3;
             if (inBounds(adr)) push(adr);
             break;
-          case PVM.lda_3:         // push local address 3
+          case PVM.lda_3:        
             adr = cpu.fp - 4;
             if (inBounds(adr)) push(adr);
             break;
-          case PVM.ldl:           // push local value
+
+            //push local variables
+          case PVM.ldl:           
             adr = cpu.fp - 1 - next();
             if (inBounds(adr)) push(mem[adr]);
             break;
-          case PVM.ldl_0:         // push value of local variable 0
+          case PVM.ldl_0:        
             adr = cpu.fp - 1;
             if (inBounds(adr)) push(mem[adr]);
             break;
-          case PVM.ldl_1:         // push value of local variable 1
+          case PVM.ldl_1:         
             adr = cpu.fp - 2;
             if (inBounds(adr)) push(mem[adr]);
             break;
-          case PVM.ldl_2:         // push value of local variable 2
+          case PVM.ldl_2:         
             adr = cpu.fp - 3;
             if (inBounds(adr)) push(mem[adr]);
             break;
-          case PVM.ldl_3:         // push value of local variable 3
+          case PVM.ldl_3:         
             adr = cpu.fp - 4;
             if (inBounds(adr)) push(mem[adr]);
             break;
@@ -500,15 +510,15 @@ import library.*;
             adr = cpu.fp - 1;
             if (inBounds(adr)) mem[adr] = pop();
             break;
-          case PVM.stl_1:         // pop to local variable 1
+          case PVM.stl_1:         
             adr = cpu.fp - 2;
             if (inBounds(adr)) mem[adr] = pop();
             break;
-          case PVM.stl_2:         // pop to local variable 2
+          case PVM.stl_2:        
             adr = cpu.fp - 3;
             if (inBounds(adr)) mem[adr] = pop();
             break;
-          case PVM.stl_3:         // pop to local variable 3
+          case PVM.stl_3:         
             adr = cpu.fp - 4;
             if (inBounds(adr)) mem[adr] = pop();
             break;

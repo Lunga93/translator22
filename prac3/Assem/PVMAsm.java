@@ -120,6 +120,11 @@ import library.*;
             case PVM.bze:
             case PVM.dsp:
             case PVM.lda:
+
+            //adding enhanced opcodes
+            case PVM.stl:
+            case PVM.stlc:
+            case PVM.ldl:s  s4
             case PVM.ldc:
               codeLen = (codeLen + 1) % PVM.memSize;
               if (ch == '\n')                        // no field could be found
@@ -129,7 +134,8 @@ import library.*;
                 if (src.error()) error("Bad address", codeLen);
               }
               break;
-            case PVM.nul:                            // unrecognized mnemonic
+
+            case PVM.nul:      // unrecognized mnemonic
               System.out.print(mnemonic);
               error(" - Invalid opcode", codeLen);
               break;
