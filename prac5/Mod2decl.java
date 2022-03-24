@@ -50,25 +50,28 @@
     static final int
     noSym       =  0,
 		EOFSym      =  1,
-		identSym    =  2,
-		eolSym      =  3,
-		labelSym    =  4,
-		beginSym    =  5,
-		endSym      =  6,
-		periodSym   =  7,
-		addSym      =  8,
-		ceqSym      =  9,
-		cneSym      = 10,
-		inpiSym     = 11,
-		prniSym     = 12,
-		stoSym		 	= 13,
-		dspSym			= 14,
-		ldcSym			= 15,
-		ldaSym			= 16,
-		brnSym			= 17,
-		bzeSym			= 18,
-		ldvSym			= 19,
-    numSym      = 20;
+    numSym      =  2,
+    identSym    =  3,
+    typeSym     =  4,
+    scolonSym   = 5,
+    varSym      =  6,
+    eqSym       =  7,
+    colonSym    =  8,
+    periodSym   =  9,
+    lsqrbrSym   =  10,
+    rsqrbrSym   =  11,
+    rangeSym    =  12,
+    lperanSym   =  13,
+    rperanSym   =  14,
+    comaSym     =  15,
+    arraySym    =  16,
+    ofSym       =  17,
+    recordSym   =  18,
+    endSym      =  19,
+    setSym      =  20,
+    pointerSym  =  21,
+    toSym       =  22;
+		
 
       // and others like this
 
@@ -109,6 +112,10 @@
       // over to you!
 
       sym = new Token(symKind, symLex.toString());
+
+      if(Character.isLetter(ch)) {
+
+      }
     } // getSym
 
   /*  ++++ Commented out for the moment
