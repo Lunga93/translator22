@@ -15,7 +15,7 @@
     printable  = ANY - control .
 
   TOKENS
-    identifier = letter { letter | digit | "_" } .
+    identifier = letter { { "_" } ( letter | digit ) } .
     number     = digit { digit } .
     stringLit  = '"' { stringCh | backslash printable } '"' .
     charLit    = "'" ( charCh   | backslash printable ) "'" .
@@ -31,17 +31,33 @@
                         | ConstDeclarations | VarDeclarations
                         | Assignment | IfStatement | WhileStatement
                         | ReturnStatement | HaltStatement
-                        | ReadStatement | WriteStatement .
+                        | ReadStatement | WriteStatement 
+                        | DoWhileStatement | BreakStatement
+                        | ContinueStatement | ForLoopStatement .
     ConstDeclarations = "const" OneConst { "," OneConst } ";" .
     OneConst          = identifier "=" Constant .
+    
     Constant          =   number | charLit
                         | "true" | "false" | "null" .
     VarDeclarations   = Type OneVar { "," OneVar } ";" .
     OneVar            = identifier [ "=" Expression ] .
     Assignment        = Designator "=" Expression ";" .
     Designator        = identifier [ "[" Expression "]" ] .
-    IfStatement       = "if" "(" Condition ")" Statement .
+    IfStatement       = "if" "(" Condition ")" Statement 
+                            { "elseif" Statement }
+                            [ "else" Statement ] .
     WhileStatement    = "while" "(" Condition ")" Statement .
+    
+
+    ForLoopStatement  = "for" Condition  Statement .
+    DoWhileStatement  = "do" Statement
+                          "while" "(" Condition ")" ";" .
+    BreakStatement    = "break" ";" .
+
+    ContinueStatement = "continue" ";" .
+
+
+
     ReturnStatement   = "return" ";" .
     HaltStatement     = "halt" ";" .
     ReadStatement     = "read" "(" ReadElement

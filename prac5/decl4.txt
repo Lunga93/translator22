@@ -1,0 +1,16 @@
+TYPE
+  Colours = ( red, orange, yellow, green, blue, indigo, violet);
+  FirstColours = Colours [ red .. orange ];
+  SmallInts = [ 1 .. 31 ];
+  Persons = RECORD (* great **** (* record a person's details *)
+              Name, Surname : ARRAY [0 .. 10] OF CHAR;
+              Age : INTEGER;;  (*a comment*)(*and another one immediately*)
+              HairColour : Colours;
+            END;
+VAR
+  I, J, K : (* use a qualified identifier - exported *} Exported.Type;
+  Class : ARRAY SmallInts OF Persons;
+  Lecturer : Persons;
+  Dynamic : POINTER TO ARRAY [ 1 .. 100] OF INTEGER;
+  Sieve : SET OF [ 0 .. 4000 ];
+  BoolSieve : ARRAY [ 0 .. 4000] OF BOOLEAN;
