@@ -53,7 +53,7 @@
     numSym      =  2,
     identSym    =  3,
     typeSym     =  4,
-    scolonSym   = 5,
+    scolonSym   =  5,
     varSym      =  6,
     eqSym       =  7,
     colonSym    =  8,
@@ -110,12 +110,84 @@
       int symKind = noSym;
 
       // over to you!
+      if (Character.isLetter(ch)) {
+        do {
+          symLex.append(ch); getChar();
+        }while (Character.isLetterOrDigit(ch));
+        
 
-      sym = new Token(symKind, symLex.toString());
+        if (symLex.toString().equals("ARRAY")) {
+          symKind = arraySym;
+        }
+        else if (symLex.toString().equals("POINTER")) {
+          symKind = pointerSym;
+        }
+        else if (symLex.toString().equals("TO")) {
+          symKind = toSym;
+        }
+        else if (symLex.toString().equals("RECORD")) {
+          symKind = recordSym;
+        }
+        else if (symLex.toString().equals("OF")) {
+          symKind = ofSym;
+        }
+        else if (symLex.toString().equals("TYPE")) {
+          symKind = typeSym;
+        }
+        else if (symLex.toString().equals("VAR")) {
+          symKind = varSym;
+        }
+        else if (symLex.toString().equals("SET")) {
+          symKind = setSym;
+        }
+        else if (symLex.toString().equals("END")) {
+          symKind = endSym;
+        }
 
-      if(Character.isLetter(ch)) {
+        else {
+          symKind = identSym;
+        }
+      }
+      else if (Character.isDigit(ch)) {
+          do{
+            symLex.append(ch); getChar();
+          } while (Character.isDigit(ch));
+          symKind = numSym;
+      }
+      else {
+        symLex.append(ch);
+        switch(ch) {
+          case EOF:
+            symLex = new StringBuilder("EOF");
+            symKind = EOFSym; break;
+          case ';':
+            symKind = scolonSym; getChar(); break;
+          case '.':
+            symKind = periodSym; getChar();
+            if(ch == '.') {
+              symLex.append(ch); symKind = rangeSym; getChar();
+            }
+            break;
+          case '=':
+            symKind = eqSym; getChar(); break;
+          case ',':
+            symKind = comaSym; getChar(); break;
+          case '[':
+            symKind = lsqrbrSym; getChar(); break;
+          case ']':
+            symKind = rsqrbrSym; getChar(); break;
+          case '(':
+            symKind = lperanSym; getChar(); break;
+          case ')':
+            symKind = rperanSym; getChar(); break;
+          case ':':
+            symKind = colonSym; getChar(); break;
+          default:
+            symKind = noSym; getChar(); break;
+        }
 
       }
+      sym = new Token(symKind, symLex.toString());
     } // getSym
 
   /*  ++++ Commented out for the moment
