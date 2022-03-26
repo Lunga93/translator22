@@ -177,7 +177,23 @@
           case ']':
             symKind = rsqrbrSym; getChar(); break;
           case '(':
-            symKind = lperanSym; getChar(); break;
+            getChar();
+            if (ch == '*') { //this is a comment
+              do {
+                getChar();
+                if (ch == '*') {
+                  getChar();
+                  if (ch == ')') {
+                    getChar();
+                    break;
+                  }
+                }
+              }while (true && ch != EOF);
+              if (ch == EOF) {
+                reportError("the comment was never closed");
+              }
+            } else { symKind = lperanSym; getChar(); }
+            break;
           case ')':
             symKind = rperanSym; getChar(); break;
           case ':':
