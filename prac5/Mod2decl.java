@@ -5,7 +5,8 @@
   // This is a skeleton program for developing a parser for Modula-2 declarations
   // P.D. Terry, Rhodes University; Modified by KL Bradshaw 2022
 
-  import java.util.*;
+  import java.lang.ProcessBuilder.Redirect.Type;
+import java.util.*;
   import library.*;
 
   class Token {
@@ -185,7 +186,8 @@
                   getChar();
                   if (ch == ')') {
                     getChar();
-                    break;
+                    getSym();
+                    return;
                   }
                 }
               }while (true && ch != EOF);
@@ -206,7 +208,7 @@
       sym = new Token(symKind, symLex.toString());
     } // getSym
 
-  /*  ++++ Commented out for the moment
+  
 
     // +++++++++++++++++++++++++++++++ Parser +++++++++++++++++++++++++++++++++++
 
@@ -220,7 +222,28 @@
     // Checks that lookahead token is in allowedSet
       if (allowedSet.contains(sym.kind)) getSym(); else abort(errorMessage);
     } // accept
-  ++++++ */
+
+    static void Mod2Decl() {
+      //Mod2Decl = { Declaration } .
+      while (sym.kind == typeSym) {
+        Declaration();
+      }
+      accept(EOFSym, "end of file expected");
+    }
+
+    static void Declaration() {
+      //Declaration = "TYPE" { TypeDecl SYNC ";" }
+      //| "VAR" { VarDecl SYNC ";" } .
+      while (sym.kind == typeSym) getSym();
+      while (sym.kind == identSym) {
+        TypeDecl();
+
+      }
+    }
+
+    static void TypeDecl() {
+      
+    }
 
     // +++++++++++++++++++++ Main driver function +++++++++++++++++++++++++++++++
 
@@ -236,21 +259,21 @@
       getChar();                                  // Lookahead character
 
   //  To test the scanner we can use a loop like the following:
-
+/*
       do {
         getSym();                                 // Lookahead symbol
         OutFile.StdOut.write(sym.kind, 3);
         OutFile.StdOut.writeLine(" " + sym.val);
       } while (sym.kind != EOFSym);
-
-  /*  After the scanner is debugged, comment out lines 127 to 131 and uncomment lines 135 to 138. 
-      In other words, replace the code immediately above with this code:
+*/
+  //  After the scanner is debugged, comment out lines 127 to 131 and uncomment lines 135 to 138. 
+  //    In other words, replace the code immediately above with this code:
 
       getSym();                                   // Lookahead symbol
       Mod2Decl();                                 // Start to parse from the goal symbol
       // if we get back here everything must have been satisfactory
       System.out.println("Parsed correctly");
-  */
+  
        output.close();
     } // main
 
