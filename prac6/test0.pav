@@ -1,0 +1,9 @@
+// Supported parva statements -- prac 4
+
+  void Main() {
+  // Demonstrate various supported statements
+    int age;
+    read(age);
+    write("Age is"); write(age);
+	if (age>18) write("Can vote");
+  } // Main

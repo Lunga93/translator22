@@ -225,7 +225,7 @@ import java.util.*;
 
     static void Mod2Decl() {
       //Mod2Decl = { Declaration } .
-      while (sym.kind == typeSym) {
+      while (sym.kind == typeSym || sym.kind == varSym) {
         Declaration();
       }
       accept(EOFSym, "end of file expected");
@@ -234,16 +234,165 @@ import java.util.*;
     static void Declaration() {
       //Declaration = "TYPE" { TypeDecl SYNC ";" }
       //| "VAR" { VarDecl SYNC ";" } .
-      while (sym.kind == typeSym) getSym();
-      while (sym.kind == identSym) {
-        TypeDecl();
-
+      if (sym.kind == typeSym) {
+        getSym();
+        while (sym.kind == identSym) {
+          TypeDecl();
+          accept(scolonSym, "; expected");
+        }
+      }
+      else if (sym.kind == varSym) {
+        getSym();
+        while (sym.kind == identSym) {
+          VarDecl();
+          accept(scolonSym, "; expected");
+        }
+      }
+      else {
+        abort("invalid declaration");
       }
     }
 
     static void TypeDecl() {
+      //TypeDecl = identifier "=" Type .
+      accept(identSym, "identifier expected");
+      accept(eqSym, "equal sign expected");
+      Type();
+    }
+
+    static void VarDecl() {
+      //VarDecl = IdentList ":" Type .
+      IdentList();
+      accept(colonSym, "colon Expected");
+      Type();
+    }
+
+    static void Type() {
+        //Type = SimpleType | ArrayType | RecordType
+        //| SetType | PointerType .
+        if (sym.kind == identSym || sym.kind == lperanSym || sym.kind == lsqrbrSym) SimpleType();
+        else if (sym.kind == arraySym) ArrayType();
+        else if (sym.kind == recordSym) RecordType();
+        else if (sym.kind == setSym) SetType();
+        else if (sym.kind == pointerSym) PointerType();
+        else {
+          abort("invalid type");
+        }
+        
+    }
+
+    static void PointerType() {
+      //PointerType = "POINTER" "TO" Type .
+      accept(pointerSym, "POINTER expected");
+      accept(toSym, "TO expected");
+      Type();
+    }
+    
+    static void SetType() {
+      //SetType = "SET" "OF" SimpleType .
+      accept(setSym, "SET expected");
+      accept(ofSym, "OF expected");
+      SimpleType();
+    }
+
+    static void IdentList() {
+      //IdentList = identifier { "," identifier } .
+      accept(identSym, "identifier expected");
+      while (sym.kind == comaSym) {
+        accept(comaSym, "coma expected");
+        accept(identSym, "identifier expected");
+      }
+    }
+
+    static void SimpleType() {
+      //SimpleType = QualIdent [ Subrange ] | Enumeration | Subrange .
+      if (sym.kind == identSym) {
+        QualIdent();
+        if (sym.kind == lsqrbrSym) Subrange();
+      }
+      else if (sym.kind == lperanSym) Enumeration();
+      else if (sym.kind == lsqrbrSym) Subrange();
+      else {
+        abort("invalid first SimpleType");
+      }
+
+    }
+
+    static void QualIdent() {
+      //QualIdent = identifier { "." identifier } .
+      accept(identSym, "identifier expected");
+      while (sym.kind == periodSym) {
+        getSym();
+        accept(identSym, "identifier expected");
+      }
+    }
+    
+    static void Subrange() {
+      //Subrange = "[" Constant ".." Constant "]" .
+      accept(lsqrbrSym, "left square bracket expected");
+      Constant();
+      accept(rangeSym, "range expected");
+      Constant();
+      accept(rsqrbrSym, "] expected");
+
+    }
+
+    static void Constant() {
+      //Constant = number | identifier .
+      if(sym.kind == numSym || sym.kind == identSym) {
+        getSym();
+      }
+      else {
+        abort("invalid start to constant");
+      }
+    }
+
+    static void Enumeration() {
+      //Enumeration = "(" IdentList ")" .
+      accept(lperanSym, "open bracket expected");
+      IdentList();
+      accept(rperanSym, "expected close bracket");
+    }
+
+    static void ArrayType() {
+      //ArrayType = "ARRAY" SimpleType { "," SimpleType } "OF" Type.
+      accept(arraySym, "ARRAY expected");
+      SimpleType();
+      while (sym.kind == comaSym) {
+        accept(comaSym, "coma expected");
+        SimpleType();
+      }
+      accept(ofSym, "OF expected");
+      Type();
+    }
+
+    static void RecordType() {
+      //RecordType = "RECORD" FieldLists "END" .
+      accept(recordSym, "record expected");
+      FieldLists();
+      accept(endSym, "END expected");
+
+    }
+
+    static void FieldLists() {
+      //FieldLists = FieldList { ";" FieldList } .
+      FieldList();
+      while (sym.kind == scolonSym) {
+        accept(scolonSym, "semi colon expected");
+        FieldList();
+      }
       
     }
+
+    static void FieldList() {
+      //FieldList = [ IdentList ":" Type ] .
+      if (sym.kind == identSym) {
+        IdentList();
+        accept(colonSym, ": expected");
+        Type();
+      }
+    }
+    
 
     // +++++++++++++++++++++ Main driver function +++++++++++++++++++++++++++++++
 

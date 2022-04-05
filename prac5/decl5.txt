@@ -20,4 +20,3 @@ VAR
   Lecturer : Persons;
 TYPE
   (* It is acceptable to have an empty sequence here *)
-

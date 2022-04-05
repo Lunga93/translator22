@@ -1,0 +1,36 @@
+
+   1 COMPILER Staff $CN
+   2     /* Describe a list of academic staff in a department
+   3        P.D. Terry, Rhodes University */
+   4     static StringBuilder build;
+   5     CHARACTERS
+   6       uLetter   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
+   7       lLetter   = "abcdefghijklmnopqrstuvwxyz" .
+   8       letter    = uLetter + lLetter .
+   9 
+  10     TOKENS
+  11       name      = uLetter { letter | "'" uLetter | "-" uLetter } .
+  12       initial   = uLetter "." .
+  13 
+  14     IGNORE CHR(0) .. CHR(31)
+  15 
+  16     PRODUCTIONS
+  17       Staff                                           
+  18            = { Person } EOF                              (. 
+  19                                                               .) .
+  20       Person    = [ Title ] FullName { "," Degree } SYNC "."  
+  21 
+  22       .
+  23       FullName  = (. build = new StringBuilder(); .)   NameLast { (. build.append("" +token.val.charAt(0) + '.'); .)  
+  24       NameLast } (. build.append(" " + token.val); .)
+  25       
+  26       .
+  27       NameLast  = { initial (. build.append(token.val); .) } name .
+  28       Title     = "Professor" | "Dr" | "Mr" | "Mrs" | "Ms" | "Miss" | "Prof" .
+  29       Degree    =   "BSc" | "BCom" | "BSc(Hons)" | "BCom(Hons)" | "MSc" 
+  30                       | 
+  31                         "PhD"  (. System.out.println("Dr " + build.toString()); .) .
+  32     END Staff.
+  33 
+
+0 errors detected

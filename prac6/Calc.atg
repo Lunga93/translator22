@@ -1,0 +1,56 @@
+import library.*;
+
+COMPILER Calc  $CN
+/* Simple five function calculator with 26 memory cells 
+   P.D. Terry, Rhodes University; modified by KB, 2021 */
+
+
+      static int[] mem = new int[26];
+
+
+CHARACTERS
+  digit      = "0123456789" .
+  letter     = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
+
+TOKENS
+  Number  = digit { digit } .
+  Variable   = letter .
+  
+IGNORE CHR(0) .. CHR(31)
+
+PRODUCTIONS
+  Calc                                    (. int index = 0; int value = 0;
+                                             for (int i = 0; i < 26; i++) 
+											   mem[i] = 0; .)
+  = { Variable                   		  (. index = token.val.charAt(0) - 'A'; .)
+      "=" 								  
+      Expression<out value>				  (. mem[index] = value; IO.writeLine(value);.)
+	  ";"
+    } EOF .
+
+  Expression<out int expValue>            (. int termValue = 0; .)
+  = Term<out expValue>
+    {   "+" Term<out termValue>           (. expValue = expValue + termValue; .)
+      | "-" Term<out termValue>           (. expValue = expValue - termValue; .)
+    } .
+
+  Term<out int termValue>                 (. int factValue = 0; .)
+  = Factor<out termValue>
+    {   "*" Factor<out factValue>         (. termValue = termValue * factValue; .)
+      | "/" Factor<out factValue>         (. termValue = termValue / factValue; .)
+	  | "%" Factor<out factValue>		  (. termValue = termValue % factValue; .)
+    } .
+
+  Factor<out int factValue>               (. factValue = 0; .)
+  =   Number                              (. try {
+                                               factValue = Integer.parseInt(token.val);
+                                             } catch (NumberFormatException e) {
+                                               factValue = 0; SemError("number out of range");
+                                             } .)
+	| Variable			                   (. int index = token.val.charAt(0) - 'A';
+                                               factValue = mem[index]; .)
+
+    | "(" Expression<out factValue>
+      ")" .
+
+END Calc.
