@@ -1,36 +1,101 @@
+  LL1 warning in IfStatement: "elsif" is the start & successor of a deletable structure
+  LL1 warning in IfStatement: "else" is the start & successor of a deletable structure
 
-   1 COMPILER Staff $CN
-   2     /* Describe a list of academic staff in a department
-   3        P.D. Terry, Rhodes University */
-   4     static StringBuilder build;
-   5     CHARACTERS
-   6       uLetter   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
-   7       lLetter   = "abcdefghijklmnopqrstuvwxyz" .
-   8       letter    = uLetter + lLetter .
+   1 import library.*;
+   2 COMPILER Parva  $CN
+   3 /* Parva level 1 grammar  (Extended) Coco/R for Java (EBNF)
+   4    This version uses Pascal/Modula-like precedences for operators
+   5    P.D. Terry, Rhodes University, Modified by KL Bradshaw 2022
+   6    Extended Grammar for Prac 4 -- used in Prac 6  */
+   7 
+   8 
    9 
-  10     TOKENS
-  11       name      = uLetter { letter | "'" uLetter | "-" uLetter } .
-  12       initial   = uLetter "." .
-  13 
-  14     IGNORE CHR(0) .. CHR(31)
-  15 
-  16     PRODUCTIONS
-  17       Staff                                           
-  18            = { Person } EOF                              (. 
-  19                                                               .) .
-  20       Person    = [ Title ] FullName { "," Degree } SYNC "."  
-  21 
-  22       .
-  23       FullName  = (. build = new StringBuilder(); .)   NameLast { (. build.append("" +token.val.charAt(0) + '.'); .)  
-  24       NameLast } (. build.append(" " + token.val); .)
-  25       
-  26       .
-  27       NameLast  = { initial (. build.append(token.val); .) } name .
-  28       Title     = "Professor" | "Dr" | "Mr" | "Mrs" | "Ms" | "Miss" | "Prof" .
-  29       Degree    =   "BSc" | "BCom" | "BSc(Hons)" | "BCom(Hons)" | "MSc" 
-  30                       | 
-  31                         "PhD"  (. System.out.println("Dr " + build.toString()); .) .
-  32     END Staff.
+  10    public static OutFile output;
+  11    
+  12 CHARACTERS
+  13   lf           = CHR(10) .
+  14   backslash    = CHR(92) .
+  15   control      = CHR(0) .. CHR(31) .
+  16   letter       = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" .
+  17   digit        = "0123456789" .
+  18   nonZeroDigit = "123456789" .
+  19   stringCh     = ANY - '"' - control - backslash .
+  20   charCh       = ANY - "'" - control - backslash .
+  21   printable    = ANY - control .
+  22 TOKENS
+  23   identifier = letter { letter | digit | "_" { "_" } ( letter | digit ) } .
+  24   number     = "0" | nonZeroDigit { digit } .
+  25   stringLit  = '"' { stringCh  | backslash printable } '"' .
+  26   charLit    = "'" ( charCh    | backslash printable ) "'" .
+  27 COMMENTS FROM "//" TO lf
+  28 COMMENTS FROM "/*" TO "*/"
+  29 IGNORE control
+  30 PRODUCTIONS
+  31   Parva                                 (. Table.clearTable(); .) 
+  32   = "void" identifier                   (. Table.addRef(token.val, true, token.line); .)     
   33 
+  34   "(" ")" Block             (. Table.printTable(); .) . 
+  35   
+  36   Block               = "{" { Statement } "}" . 
+  37   Statement           = (  Block
+  38                          | Assignments
+  39                          | ConstDeclarations | VarDeclarations
+  40                          | IfStatement       | WhileStatement
+  41                          | ReturnStatement   | HaltStatement
+  42                          | ReadStatement     | WriteStatement
+  43                          | ForStatement      | BreakStatement
+  44                          | ContinueStatement | DoWhileStatement
+  45                          | InclStatement     | ExclStatement
+  46                          | ";"
+  47                         ) .
+  48   ConstDeclarations   = "const" OneConst { "," OneConst } ";" .
+  49   OneConst            = identifier                                      (. Table.addRef(token.val, false, token.line); .) 
+  50   "=" Constant .
+  51   Constant            = number | charLit | "true" | "false" | "null" .
+  52   VarDeclarations     = Type OneVar { "," OneVar } ";" .
+  53   OneVar              = identifier                                      (. Table.addRef(token.val, true, token.line); .) 
+  54    [ "=" Expression ] .
+  55   Assignments       = Designator ( "=" | CompoundAssignOp ) Expression ";" .
+  56   Designator          = identifier                                      (. Table.addRef(token.val, false, token.line); .) 
+  57   [ "[" Expression "]" ] .
+  58   IfStatement       = "if" "(" Condition ")" Statement
+  59                       { "elsif" "(" Condition ")" Statement }
+  60                       [ "else" Statement ] .
+  61   BreakStatement      = "break" ";" .
+  62   ContinueStatement   = "continue" ";" .
+  63   DoWhileStatement  = "do"  Statement  "while" "(" Condition ")" ";" .
+  64 
+  65   InclStatement       = "incl" "(" Designator "," Expression ")" ";" .
+  66   ExclStatement       = "excl" "(" Designator "," Expression ")" ";" .
+  67   ForStatement        = "for" identifier                                (. Table.addRef(token.val, false, token.line); .) 
+  68    "in" "(" ExpList ")" Statement .
+  69   WhileStatement      = "while" "(" Condition ")" Statement .
+  70   ReturnStatement     = "return" ";" .
+  71   HaltStatement       = "halt" ";" .
+  72   ReadStatement       = "read" "(" ReadElement { "," ReadElement } ")" ";" .
+  73   ReadElement         = stringLit | Designator .
+  74   WriteStatement      = "write" "(" WriteElement { "," WriteElement } ")" ";" .
+  75   WriteElement        = stringLit | Expression .
+  76   Condition           = Expression .
+  77   Expression          = AddExp [ RelOp AddExp ] .
+  78   AddExp              = [ "+" | "-" ] Term { AddOp Term } .
+  79   Term                = Factor { MulOp Factor } .
+  80   Factor              =   Designator
+  81                         | Constant
+  82                         | SetFactor
+  83                         | "new" BasicType "[" Expression "]"
+  84                         | "!" Factor | "(" Expression ")" .
+  85   SetFactor           = "{" [ ExpList ] "}" .
+  86   ExpList             = Range { "," Range } .
+  87   Range               = Expression [ ".." Expression ] .
+  88   Type                = BasicType [ "[]" ] .
+  89   BasicType           = "int" | "bool" | "char" | "set" .
+  90 
+  91   AddOp               = "+" | "-" | "||" .
+  92   MulOp               = "*" | "/" | "&&" .
+  93   RelOp               = "==" | "!=" | "<" | "<=" | ">" | ">=" | "in" .
+  94   CompoundAssignOp  = "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" .
+  95 END Parva .
 
 0 errors detected
+2 warnings detected

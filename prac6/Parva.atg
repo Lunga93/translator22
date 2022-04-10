@@ -1,100 +1,95 @@
-    COMPILER Parva  $CN
-    /* Parva level 1 grammar  (Extended) Coco/R for Java (EBNF)
-       This version uses Pascal/Modula-like precedences for operators
-       P.D. Terry, Rhodes University, Modified by KL Bradshaw 2022
-       Extended Grammar for Prac 4 -- used in Prac 6  */
+import library.*;
+COMPILER Parva  $CN
+/* Parva level 1 grammar  (Extended) Coco/R for Java (EBNF)
+   This version uses Pascal/Modula-like precedences for operators
+   P.D. Terry, Rhodes University, Modified by KL Bradshaw 2022
+   Extended Grammar for Prac 4 -- used in Prac 6  */
 
-    CHARACTERS
-      lf           = CHR(10) .
-      backslash    = CHR(92) .
-      control      = CHR(0) .. CHR(31) .
-      letter       = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" .
-      digit        = "0123456789" .
-      nonZeroDigit = "123456789" .
-      stringCh     = ANY - '"' - control - backslash .
-      charCh       = ANY - "'" - control - backslash .
-      printable    = ANY - control .
 
-    TOKENS
 
-      identifier = letter { letter | digit | "_" { "_" } ( letter | digit ) } .
-      number     = "0" | nonZeroDigit { digit } .
-      stringLit  = '"' { stringCh  | backslash printable } '"' .
-      charLit    = "'" ( charCh    | backslash printable ) "'" .
+   public static OutFile output;
+   
+CHARACTERS
+  lf           = CHR(10) .
+  backslash    = CHR(92) .
+  control      = CHR(0) .. CHR(31) .
+  letter       = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" .
+  digit        = "0123456789" .
+  nonZeroDigit = "123456789" .
+  stringCh     = ANY - '"' - control - backslash .
+  charCh       = ANY - "'" - control - backslash .
+  printable    = ANY - control .
+TOKENS
+  identifier = letter { letter | digit | "_" { "_" } ( letter | digit ) } .
+  number     = "0" | nonZeroDigit { digit } .
+  stringLit  = '"' { stringCh  | backslash printable } '"' .
+  charLit    = "'" ( charCh    | backslash printable ) "'" .
+COMMENTS FROM "//" TO lf
+COMMENTS FROM "/*" TO "*/"
+IGNORE control
+PRODUCTIONS
+  Parva                                 (. Table.clearTable(); .) 
+  = "void" identifier                   (. Table.addRef(token.val, true, token.line); .)     
 
-    COMMENTS FROM "//" TO lf
-    COMMENTS FROM "/*" TO "*/"
+  "(" ")" Block             (. Table.printTable(); .) . 
+  
+  Block               = "{" { Statement } "}" . 
+  Statement           = (  Block
+                         | Assignments
+                         | ConstDeclarations | VarDeclarations
+                         | IfStatement       | WhileStatement
+                         | ReturnStatement   | HaltStatement
+                         | ReadStatement     | WriteStatement
+                         | ForStatement      | BreakStatement
+                         | ContinueStatement | DoWhileStatement
+                         | InclStatement     | ExclStatement
+                         | ";"
+                        ) .
+  ConstDeclarations   = "const" OneConst { "," OneConst } ";" .
+  OneConst            = identifier                                      (. Table.addRef(token.val, false, token.line); .) 
+  "=" Constant .
+  Constant            = number | charLit | "true" | "false" | "null" .
+  VarDeclarations     = Type OneVar { "," OneVar } ";" .
+  OneVar              = identifier                                      (. Table.addRef(token.val, true, token.line); .) 
+   [ "=" Expression ] .
+  Assignments       = Designator ( "=" | CompoundAssignOp ) Expression ";" .
+  Designator          = identifier                                      (. Table.addRef(token.val, false, token.line); .) 
+  [ "[" Expression "]" ] .
+  IfStatement       = "if" "(" Condition ")" Statement
+                      { "elsif" "(" Condition ")" Statement }
+                      [ "else" Statement ] .
+  BreakStatement      = "break" ";" .
+  ContinueStatement   = "continue" ";" .
+  DoWhileStatement  = "do"  Statement  "while" "(" Condition ")" ";" .
 
-    IGNORE control
+  InclStatement       = "incl" "(" Designator "," Expression ")" ";" .
+  ExclStatement       = "excl" "(" Designator "," Expression ")" ";" .
+  ForStatement        = "for" identifier                                (. Table.addRef(token.val, false, token.line); .) 
+   "in" "(" ExpList ")" Statement .
+  WhileStatement      = "while" "(" Condition ")" Statement .
+  ReturnStatement     = "return" ";" .
+  HaltStatement       = "halt" ";" .
+  ReadStatement       = "read" "(" ReadElement { "," ReadElement } ")" ";" .
+  ReadElement         = stringLit | Designator .
+  WriteStatement      = "write" "(" WriteElement { "," WriteElement } ")" ";" .
+  WriteElement        = stringLit | Expression .
+  Condition           = Expression .
+  Expression          = AddExp [ RelOp AddExp ] .
+  AddExp              = [ "+" | "-" ] Term { AddOp Term } .
+  Term                = Factor { MulOp Factor } .
+  Factor              =   Designator
+                        | Constant
+                        | SetFactor
+                        | "new" BasicType "[" Expression "]"
+                        | "!" Factor | "(" Expression ")" .
+  SetFactor           = "{" [ ExpList ] "}" .
+  ExpList             = Range { "," Range } .
+  Range               = Expression [ ".." Expression ] .
+  Type                = BasicType [ "[]" ] .
+  BasicType           = "int" | "bool" | "char" | "set" .
 
-    PRODUCTIONS
-      Parva               = "void" identifier "(" ")" Block .
-      Block               = "{" { Statement } "}" .
-
-      Statement           = (  Block
-                             | Assignments
-                             | ConstDeclarations | VarDeclarations
-                             | IfStatement       | WhileStatement
-                             | ReturnStatement   | HaltStatement
-                             | ReadStatement     | WriteStatement
-                             | ForStatement      | BreakStatement
-                             | ContinueStatement | DoWhileStatement
-                             | InclStatement     | ExclStatement
-                             | ";"
-                            ) .
-
-      ConstDeclarations   = "const" OneConst { "," OneConst } ";" .
-      OneConst            = identifier "=" Constant .
-      Constant            = number | charLit | "true" | "false" | "null" .
-      VarDeclarations     = Type OneVar { "," OneVar } ";" .
-      OneVar              = identifier [ "=" Expression ] .
-
-      Assignments       = Designator ( "=" | CompoundAssignOp ) Expression ";" .
-
-      Designator          = identifier [ "[" Expression "]" ] .
-
-      IfStatement       = "if" "(" Condition ")" Statement
-                          { "elsif" "(" Condition ")" Statement }
-                          [ "else" Statement ] .
-      BreakStatement      = "break" ";" .
-      ContinueStatement   = "continue" ";" .
-
-      DoWhileStatement  = "do"  Statement  "while" "(" Condition ")" ";" .
-	  
-      InclStatement       = "incl" "(" Designator "," Expression ")" ";" .
-      ExclStatement       = "excl" "(" Designator "," Expression ")" ";" .
-
-      ForStatement        = "for" identifier "in" "(" ExpList ")" Statement .
-
-      WhileStatement      = "while" "(" Condition ")" Statement .
-      ReturnStatement     = "return" ";" .
-      HaltStatement       = "halt" ";" .
-      ReadStatement       = "read" "(" ReadElement { "," ReadElement } ")" ";" .
-      ReadElement         = stringLit | Designator .
-      WriteStatement      = "write" "(" WriteElement { "," WriteElement } ")" ";" .
-      WriteElement        = stringLit | Expression .
-      Condition           = Expression .
-
-      Expression          = AddExp [ RelOp AddExp ] .
-      AddExp              = [ "+" | "-" ] Term { AddOp Term } .
-      Term                = Factor { MulOp Factor } .
-      Factor              =   Designator
-                            | Constant
-                            | SetFactor
-                            | "new" BasicType "[" Expression "]"
-                            | "!" Factor | "(" Expression ")" .
-
-      SetFactor           = "{" [ ExpList ] "}" .
-      ExpList             = Range { "," Range } .
-      Range               = Expression [ ".." Expression ] .
-
-      Type                = BasicType [ "[]" ] .
-
-      BasicType           = "int" | "bool" | "char" | "set" .
-    
-      AddOp               = "+" | "-" | "||" .
-      MulOp               = "*" | "/" | "&&" .
-      RelOp               = "==" | "!=" | "<" | "<=" | ">" | ">=" | "in" .
-      CompoundAssignOp  = "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" .
-
-    END Parva .
+  AddOp               = "+" | "-" | "||" .
+  MulOp               = "*" | "/" | "&&" .
+  RelOp               = "==" | "!=" | "<" | "<=" | ">" | ">=" | "in" .
+  CompoundAssignOp  = "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" .
+END Parva .
