@@ -31,41 +31,50 @@
   30 	    SYNC";" )
   31     } EOF .
   32 
-  33   Expression<out int expValue>            (. int termValue = 0; .)
-  34   = Term<out expValue>
-  35     {   "+" Term<out termValue>           (. expValue = expValue + termValue; .)
-  36       | "-" Term<out termValue>           (. expValue = expValue - termValue; .)
-  37 	  | "&&" Term<out termValue>
-  38 	  | "==" Term<out termValue>
-  39 	  | "!=" Term<out termValue>
-  40 	  | "<" Term<out termValue>
-  41 	  | ">" Term<out termValue>
-  42 	  | "<=" Term<out termValue>
-  43 	  | ">=" Term<out termValue>
-  44     } .
-  45 
-  46   Term<out int termValue>                 (. int factValue = 0; .)
-  47   = Factor<out termValue>
-  48     {   "*" Factor<out factValue>         (. termValue = termValue * factValue; .)
-  49       | "/" Factor<out factValue>         (. termValue = termValue / factValue; .)
-  50 	  | "%" Factor<out factValue>		  (. termValue = termValue % factValue; .)
-  51     } .
+  33 
+  34   Expression<out int expValue> = AndExp<out expValue> { "||" AndExp<out andValue> } .
+  35   AndExp<out int andValue> = EqlExp<out andValue> { "&&" EqlExp<out eqlValue> } .
+  36   EqlExp<out int eqlValue> = RelExp<out eqlValue> {  "==" RelExp<out relValue>
+  37 					| "!=" RelExp<out<out relValue>
+  38 				  } .
+  39   RelExp<out int relValue> = AddExp<out relValue>
+  40 				{ ( "<" AddExp<out addValue
+  41 					| "<=" AddExp<out addValue
+  42 					| ">" AddExp<out addValue
+  43 					| ">=" AddExp<out addValue
+  44 					)  } .
+  45   
+  46   AddExp<out int addValue>            (. int  addValue = 0; .)
+  47   = Term<out addValue>
+****   ^ "|" expected
+  48     {   "+" Term<out termValue>           (.  addValue = addValue + termValue; .)
+  49       | "-" Term<out termValue>           (. addValue = addValue - termValue; .)
+  50 	} .
+  51 
   52 
-  53   Factor<out int factValue>               (. factValue = 0; .)
-  54   =   Number                              (. try {
-  55                                                factValue = Integer.parseInt(token.val);
-  56                                              } catch (NumberFormatException e) {
-  57                                                factValue = 0; SemError("number out of range");
-  58                                              } .)
-  59 	| Variable			                   (. int index = token.val.charAt(0) - 'A';
-  60                                                factValue = mem[index]; .)
-  61 	| "true"							  (. factValue = 1; .)
-  62 
-  63 	| "false"							  (. factValue = 0; .)
-  64 
-  65     | "(" Expression<out factValue>
-  66       ")" .
-  67 
-  68 END Calc.
+  53   Term<out int termValue>                 (. int factValue = 0; .)
+  54   = Factor<out termValue>
+  55     {   "*" Factor<out factValue>         (. termValue = termValue * factValue; .)
+  56       | "/" Factor<out factValue>         (. termValue = termValue / factValue; .)
+  57 	  | "%" Factor<out factValue>		  (. termValue = termValue % factValue; .)
+  58 
+  59     } .
+  60 
+  61   Factor<out int factValue>               (. factValue = 0; .)
+  62   =   Number                              (. try {
+  63                                                factValue = Integer.parseInt(token.val);
+  64                                              } catch (NumberFormatException e) {
+  65                                                factValue = 0; SemError("number out of range");
+  66                                              } .)
+  67 	| Variable			                   (. int index = token.val.charAt(0) - 'A';
+  68                                                factValue = mem[index]; .)
+  69 	| "true"							  (. factValue = 1; .)
+  70 
+  71 	| "false"							  (. factValue = 0; .)
+  72 
+  73     | "(" Expression<out factValue>
+  74       ")" .
+  75 
+  76 END Calc.
 
-0 errors detected
+1 errors detected

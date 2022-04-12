@@ -30,24 +30,32 @@ PRODUCTIONS
 	    SYNC";" )
     } EOF .
 
-  Expression<out int expValue>            (. int termValue = 0; .)
-  = Term<out expValue>
-    {   "+" Term<out termValue>           (. expValue = expValue + termValue; .)
-      | "-" Term<out termValue>           (. expValue = expValue - termValue; .)
-	  | "&&" Term<out termValue>
-	  | "==" Term<out termValue>
-	  | "!=" Term<out termValue>
-	  | "<" Term<out termValue>
-	  | ">" Term<out termValue>
-	  | "<=" Term<out termValue>
-	  | ">=" Term<out termValue>
-    } .
+
+  Expression<out int expValue> = AndExp<out expValue> { "||" AndExp<out andValue> } .
+  AndExp<out int andValue> = EqlExp<out andValue> { "&&" EqlExp<out eqlValue> } .
+  EqlExp<out int eqlValue> = RelExp<out eqlValue> {  "==" RelExp<out relValue>
+					| "!=" RelExp<out<out relValue>
+				  } .
+  RelExp<out int relValue> = AddExp<out relValue>
+				{ ( "<" AddExp<out addValue
+					| "<=" AddExp<out addValue
+					| ">" AddExp<out addValue
+					| ">=" AddExp<out addValue
+					)  } .
+  
+  AddExp<out int addValue>            (. int  addValue = 0; .)
+  = Term<out addValue>
+    {   "+" Term<out termValue>           (.  addValue = addValue + termValue; .)
+      | "-" Term<out termValue>           (. addValue = addValue - termValue; .)
+	} .
+
 
   Term<out int termValue>                 (. int factValue = 0; .)
   = Factor<out termValue>
     {   "*" Factor<out factValue>         (. termValue = termValue * factValue; .)
       | "/" Factor<out factValue>         (. termValue = termValue / factValue; .)
 	  | "%" Factor<out factValue>		  (. termValue = termValue % factValue; .)
+
     } .
 
   Factor<out int factValue>               (. factValue = 0; .)
