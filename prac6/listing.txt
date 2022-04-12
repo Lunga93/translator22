@@ -1,101 +1,71 @@
-  LL1 warning in IfStatement: "elsif" is the start & successor of a deletable structure
-  LL1 warning in IfStatement: "else" is the start & successor of a deletable structure
 
    1 import library.*;
-   2 COMPILER Parva  $CN
-   3 /* Parva level 1 grammar  (Extended) Coco/R for Java (EBNF)
-   4    This version uses Pascal/Modula-like precedences for operators
-   5    P.D. Terry, Rhodes University, Modified by KL Bradshaw 2022
-   6    Extended Grammar for Prac 4 -- used in Prac 6  */
+   2 
+   3 COMPILER Calc  $CN
+   4 /* Simple five function calculator with 26 memory cells 
+   5    P.D. Terry, Rhodes University; modified by KB, 2021 */
+   6 
    7 
-   8 
+   8       static int[] mem = new int[26];
    9 
-  10    public static OutFile output;
-  11    
-  12 CHARACTERS
-  13   lf           = CHR(10) .
-  14   backslash    = CHR(92) .
-  15   control      = CHR(0) .. CHR(31) .
-  16   letter       = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" .
-  17   digit        = "0123456789" .
-  18   nonZeroDigit = "123456789" .
-  19   stringCh     = ANY - '"' - control - backslash .
-  20   charCh       = ANY - "'" - control - backslash .
-  21   printable    = ANY - control .
-  22 TOKENS
-  23   identifier = letter { letter | digit | "_" { "_" } ( letter | digit ) } .
-  24   number     = "0" | nonZeroDigit { digit } .
-  25   stringLit  = '"' { stringCh  | backslash printable } '"' .
-  26   charLit    = "'" ( charCh    | backslash printable ) "'" .
-  27 COMMENTS FROM "//" TO lf
-  28 COMMENTS FROM "/*" TO "*/"
-  29 IGNORE control
-  30 PRODUCTIONS
-  31   Parva                                 (. Table.clearTable(); .) 
-  32   = "void" identifier                   (. Table.addRef(token.val, true, token.line); .)     
-  33 
-  34   "(" ")" Block             (. Table.printTable(); .) . 
-  35   
-  36   Block               = "{" { Statement } "}" . 
-  37   Statement           = (  Block
-  38                          | Assignments
-  39                          | ConstDeclarations | VarDeclarations
-  40                          | IfStatement       | WhileStatement
-  41                          | ReturnStatement   | HaltStatement
-  42                          | ReadStatement     | WriteStatement
-  43                          | ForStatement      | BreakStatement
-  44                          | ContinueStatement | DoWhileStatement
-  45                          | InclStatement     | ExclStatement
-  46                          | ";"
-  47                         ) .
-  48   ConstDeclarations   = "const" OneConst { "," OneConst } ";" .
-  49   OneConst            = identifier                                      (. Table.addRef(token.val, false, token.line); .) 
-  50   "=" Constant .
-  51   Constant            = number | charLit | "true" | "false" | "null" .
-  52   VarDeclarations     = Type OneVar { "," OneVar } ";" .
-  53   OneVar              = identifier                                      (. Table.addRef(token.val, true, token.line); .) 
-  54    [ "=" Expression ] .
-  55   Assignments       = Designator ( "=" | CompoundAssignOp ) Expression ";" .
-  56   Designator          = identifier                                      (. Table.addRef(token.val, false, token.line); .) 
-  57   [ "[" Expression "]" ] .
-  58   IfStatement       = "if" "(" Condition ")" Statement
-  59                       { "elsif" "(" Condition ")" Statement }
-  60                       [ "else" Statement ] .
-  61   BreakStatement      = "break" ";" .
-  62   ContinueStatement   = "continue" ";" .
-  63   DoWhileStatement  = "do"  Statement  "while" "(" Condition ")" ";" .
+  10 
+  11 CHARACTERS
+  12   digit      = "0123456789" .
+  13   letter     = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
+  14 
+  15 TOKENS
+  16   Number  = digit { digit } .
+  17   Variable   = letter .
+  18   
+  19 IGNORE CHR(0) .. CHR(31)
+  20 
+  21 PRODUCTIONS
+  22   Calc                                    (. int index = 0; int value = 0;
+  23                                              for (int i = 0; i < 26; i++) 
+  24 											   mem[i] = 0; .)
+  25   = { ( Variable                   		  (. index = token.val.charAt(0) - 'A'; .)
+  26       WEAK "=" 								  
+  27       Expression<out value>				  (. mem[index] = value; IO.writeLine(value);.)
+  28 	 SYNC ";" )
+  29 	  | ( "print" Expression<out value>   (. IO.writeLine(value); .)
+  30 	    SYNC";" )
+  31     } EOF .
+  32 
+  33   Expression<out int expValue>            (. int termValue = 0; .)
+  34   = Term<out expValue>
+  35     {   "+" Term<out termValue>           (. expValue = expValue + termValue; .)
+  36       | "-" Term<out termValue>           (. expValue = expValue - termValue; .)
+  37 	  | "&&" Term<out termValue>
+  38 	  | "==" Term<out termValue>
+  39 	  | "!=" Term<out termValue>
+  40 	  | "<" Term<out termValue>
+  41 	  | ">" Term<out termValue>
+  42 	  | "<=" Term<out termValue>
+  43 	  | ">=" Term<out termValue>
+  44     } .
+  45 
+  46   Term<out int termValue>                 (. int factValue = 0; .)
+  47   = Factor<out termValue>
+  48     {   "*" Factor<out factValue>         (. termValue = termValue * factValue; .)
+  49       | "/" Factor<out factValue>         (. termValue = termValue / factValue; .)
+  50 	  | "%" Factor<out factValue>		  (. termValue = termValue % factValue; .)
+  51     } .
+  52 
+  53   Factor<out int factValue>               (. factValue = 0; .)
+  54   =   Number                              (. try {
+  55                                                factValue = Integer.parseInt(token.val);
+  56                                              } catch (NumberFormatException e) {
+  57                                                factValue = 0; SemError("number out of range");
+  58                                              } .)
+  59 	| Variable			                   (. int index = token.val.charAt(0) - 'A';
+  60                                                factValue = mem[index]; .)
+  61 	| "true"							  (. factValue = 1; .)
+  62 
+  63 	| "false"							  (. factValue = 0; .)
   64 
-  65   InclStatement       = "incl" "(" Designator "," Expression ")" ";" .
-  66   ExclStatement       = "excl" "(" Designator "," Expression ")" ";" .
-  67   ForStatement        = "for" identifier                                (. Table.addRef(token.val, false, token.line); .) 
-  68    "in" "(" ExpList ")" Statement .
-  69   WhileStatement      = "while" "(" Condition ")" Statement .
-  70   ReturnStatement     = "return" ";" .
-  71   HaltStatement       = "halt" ";" .
-  72   ReadStatement       = "read" "(" ReadElement { "," ReadElement } ")" ";" .
-  73   ReadElement         = stringLit | Designator .
-  74   WriteStatement      = "write" "(" WriteElement { "," WriteElement } ")" ";" .
-  75   WriteElement        = stringLit | Expression .
-  76   Condition           = Expression .
-  77   Expression          = AddExp [ RelOp AddExp ] .
-  78   AddExp              = [ "+" | "-" ] Term { AddOp Term } .
-  79   Term                = Factor { MulOp Factor } .
-  80   Factor              =   Designator
-  81                         | Constant
-  82                         | SetFactor
-  83                         | "new" BasicType "[" Expression "]"
-  84                         | "!" Factor | "(" Expression ")" .
-  85   SetFactor           = "{" [ ExpList ] "}" .
-  86   ExpList             = Range { "," Range } .
-  87   Range               = Expression [ ".." Expression ] .
-  88   Type                = BasicType [ "[]" ] .
-  89   BasicType           = "int" | "bool" | "char" | "set" .
-  90 
-  91   AddOp               = "+" | "-" | "||" .
-  92   MulOp               = "*" | "/" | "&&" .
-  93   RelOp               = "==" | "!=" | "<" | "<=" | ">" | ">=" | "in" .
-  94   CompoundAssignOp  = "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" .
-  95 END Parva .
+  65     | "(" Expression<out factValue>
+  66       ")" .
+  67 
+  68 END Calc.
 
 0 errors detected
-2 warnings detected

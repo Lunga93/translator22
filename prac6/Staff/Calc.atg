@@ -23,32 +23,31 @@ PRODUCTIONS
                                              for (int i = 0; i < 26; i++) 
 											   mem[i] = 0; .)
   = { ( Variable                   		  (. index = token.val.charAt(0) - 'A'; .)
-      WEAK "=" 								  
+	  	"=" 								  
       Expression<out value>				  (. mem[index] = value; IO.writeLine(value);.)
-	 SYNC ";" )
-	  | ( "print" Expression<out value>   (. IO.writeLine(value); .)
-	    SYNC";" )
+	   ";" )
+	  | ( "print" Expression<out value)	  (. IO.writeLine(value); .)
+		 ";" )
     } EOF .
+  
+  Expression<out int expValue>				(. int termValue = 0; .)
+	= Term<out expValue>
+	{ "+" Term<out termValue>				(. expValue = expValue + termValue; .)
+	| "-" Term<out termValue>				(. expValue = expValue - termValue; .)
+	} .
+	Term<out int termValue>					(. int factValue = 0; .)
+	= Factor<out termValue>
+	{ "*" Factor<out factValue>				(. termValue = termValue * factValue; .)
+	| "/" Factor<out factValue>				(. if (factValue == 0)
+                                                { SemError("Dividing by zero"); 
+												termValue = 0; }
+                                               else termValue = termValue / factValue; .)
 
-  Expression<out int expValue>            (. int termValue = 0; .)
-  = Term<out expValue>
-    {   "+" Term<out termValue>           (. expValue = expValue + termValue; .)
-      | "-" Term<out termValue>           (. expValue = expValue - termValue; .)
-	  | "&&" Term<out termValue>
-	  | "==" Term<out termValue>
-	  | "!=" Term<out termValue>
-	  | "<" Term<out termValue>
-	  | ">" Term<out termValue>
-	  | "<=" Term<out termValue>
-	  | ">=" Term<out termValue>
-    } .
-
-  Term<out int termValue>                 (. int factValue = 0; .)
-  = Factor<out termValue>
-    {   "*" Factor<out factValue>         (. termValue = termValue * factValue; .)
-      | "/" Factor<out factValue>         (. termValue = termValue / factValue; .)
-	  | "%" Factor<out factValue>		  (. termValue = termValue % factValue; .)
-    } .
+	| "%" Factor<out factValue>			    (. if (factValue == 0) {
+                                                SemError("moding by zero");
+												termValue = 0; }
+											 else termValue = termValue % factValue; .)	
+	} .
 
   Factor<out int factValue>               (. factValue = 0; .)
   =   Number                              (. try {
@@ -58,9 +57,10 @@ PRODUCTIONS
                                              } .)
 	| Variable			                   (. int index = token.val.charAt(0) - 'A';
                                                factValue = mem[index]; .)
-	| "true"							  (. factValue = 1; .)
+    
+	| "true"
 
-	| "false"							  (. factValue = 0; .)
+	| "false"
 
     | "(" Expression<out factValue>
       ")" .
