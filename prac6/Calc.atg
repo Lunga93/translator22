@@ -18,6 +18,8 @@ TOKENS
   
 IGNORE CHR(0) .. CHR(31)
 
+/* I used SYNC for the semicolons because it's always used to end the production. */
+/* I used weak WEAK for '=' because a user my forget to include it */
 PRODUCTIONS
   Calc                                    (. int index = 0; int value = 0;
                                              for (int i = 0; i < 26; i++) 
@@ -31,19 +33,60 @@ PRODUCTIONS
     } EOF .
 
 
-  Expression<out int expValue> = AndExp<out expValue> { "||" AndExp<out andValue> } .
-  AndExp<out int andValue> = EqlExp<out andValue> { "&&" EqlExp<out eqlValue> } .
-  EqlExp<out int eqlValue> = RelExp<out eqlValue> {  "==" RelExp<out relValue>
-					| "!=" RelExp<out<out relValue>
-				  } .
-  RelExp<out int relValue> = AddExp<out relValue>
-				{ ( "<" AddExp<out addValue
-					| "<=" AddExp<out addValue
-					| ">" AddExp<out addValue
-					| ">=" AddExp<out addValue
+  Expression<out int expValue>			  (. int andValue = 0; .)
+  = AndExp<out expValue> 
+  { "||" AndExp<out andValue>             (. boolean exp = (expValue == 1);
+											 boolean and = (andValue == 1);
+											 if ( exp || and) expValue = 1;
+											 else expValue = 0;
+
+										  .)
+
+  } .
+
+  AndExp<out int andValue>				  (. int eqlValue = 0; .)
+  = EqlExp<out andValue>
+	{ "&&" EqlExp<out eqlValue>			  (. boolean eql = (eqlValue == 1);
+											 boolean and = (andValue == 1);
+											if ( and && eql ) {
+											andValue = 1;
+
+											}
+											else andValue = 0;
+
+										  .)
+	} .
+
+  EqlExp<out int eqlValue>				   (. int relValue = 0; .)
+  = RelExp<out eqlValue> 
+  {  "==" RelExp<out relValue>			  (. if (eqlValue == relValue) eqlValue = 1;
+											 else eqlValue = 0;
+											 .)
+  | "!=" RelExp<out relValue>			  (. if (eqlValue != relValue) eqlValue = 1;
+
+											 else eqlValue = 0;
+											 .)
+   } .
+
+  RelExp<out int relValue>				 (. int addValue = 0; .)
+  = AddExp<out relValue>
+	{ ( "<" AddExp<out addValue>    (. if ( relValue < addValue) relValue = 1;
+										else relValue = 0;
+										.)
+
+	| "<=" AddExp<out addValue>     (. if ( relValue <= addValue) relValue = 1;
+										else relValue = 0;
+										.)
+	| ">" AddExp<out addValue>		(. if ( relValue > addValue) relValue = 1;
+										else relValue = 0;
+										.)
+
+	| ">=" AddExp<out addValue>     (. if ( relValue >= addValue) relValue = 1;
+										else relValue = 0;
+										.)
 					)  } .
   
-  AddExp<out int addValue>            (. int  addValue = 0; .)
+  AddExp<out int addValue>            (. int  termValue = 0; .)
   = Term<out addValue>
     {   "+" Term<out termValue>           (.  addValue = addValue + termValue; .)
       | "-" Term<out termValue>           (. addValue = addValue - termValue; .)
@@ -53,8 +96,14 @@ PRODUCTIONS
   Term<out int termValue>                 (. int factValue = 0; .)
   = Factor<out termValue>
     {   "*" Factor<out factValue>         (. termValue = termValue * factValue; .)
-      | "/" Factor<out factValue>         (. termValue = termValue / factValue; .)
-	  | "%" Factor<out factValue>		  (. termValue = termValue % factValue; .)
+      | "/" Factor<out factValue>         (. 
+											if (factValue == 0)	SemError("Division by zero");
+											else termValue = termValue / factValue; .)
+	  | "%" Factor<out factValue>		  (. 
+												if (factValue == 0)
+													SemError("Moding by zero");
+												else termValue = termValue % factValue; 
+												.)
 
     } .
 

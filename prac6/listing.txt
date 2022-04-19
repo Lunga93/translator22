@@ -19,62 +19,110 @@
   18   
   19 IGNORE CHR(0) .. CHR(31)
   20 
-  21 PRODUCTIONS
-  22   Calc                                    (. int index = 0; int value = 0;
-  23                                              for (int i = 0; i < 26; i++) 
-  24 											   mem[i] = 0; .)
-  25   = { ( Variable                   		  (. index = token.val.charAt(0) - 'A'; .)
-  26       WEAK "=" 								  
-  27       Expression<out value>				  (. mem[index] = value; IO.writeLine(value);.)
-  28 	 SYNC ";" )
-  29 	  | ( "print" Expression<out value>   (. IO.writeLine(value); .)
-  30 	    SYNC";" )
-  31     } EOF .
-  32 
-  33 
-  34   Expression<out int expValue> = AndExp<out expValue> { "||" AndExp<out andValue> } .
-  35   AndExp<out int andValue> = EqlExp<out andValue> { "&&" EqlExp<out eqlValue> } .
-  36   EqlExp<out int eqlValue> = RelExp<out eqlValue> {  "==" RelExp<out relValue>
-  37 					| "!=" RelExp<out<out relValue>
-  38 				  } .
-  39   RelExp<out int relValue> = AddExp<out relValue>
-  40 				{ ( "<" AddExp<out addValue
-  41 					| "<=" AddExp<out addValue
-  42 					| ">" AddExp<out addValue
-  43 					| ">=" AddExp<out addValue
-  44 					)  } .
-  45   
-  46   AddExp<out int addValue>            (. int  addValue = 0; .)
-  47   = Term<out addValue>
-****   ^ "|" expected
-  48     {   "+" Term<out termValue>           (.  addValue = addValue + termValue; .)
-  49       | "-" Term<out termValue>           (. addValue = addValue - termValue; .)
-  50 	} .
-  51 
-  52 
-  53   Term<out int termValue>                 (. int factValue = 0; .)
-  54   = Factor<out termValue>
-  55     {   "*" Factor<out factValue>         (. termValue = termValue * factValue; .)
-  56       | "/" Factor<out factValue>         (. termValue = termValue / factValue; .)
-  57 	  | "%" Factor<out factValue>		  (. termValue = termValue % factValue; .)
-  58 
-  59     } .
-  60 
-  61   Factor<out int factValue>               (. factValue = 0; .)
-  62   =   Number                              (. try {
-  63                                                factValue = Integer.parseInt(token.val);
-  64                                              } catch (NumberFormatException e) {
-  65                                                factValue = 0; SemError("number out of range");
-  66                                              } .)
-  67 	| Variable			                   (. int index = token.val.charAt(0) - 'A';
-  68                                                factValue = mem[index]; .)
-  69 	| "true"							  (. factValue = 1; .)
+  21 /* I used SYNC for the semicolons because it's always used to end the production. */
+  22 /* I used weak WEAK for '=' because a user my forget to include it */
+  23 PRODUCTIONS
+  24   Calc                                    (. int index = 0; int value = 0;
+  25                                              for (int i = 0; i < 26; i++) 
+  26 											   mem[i] = 0; .)
+  27   = { ( Variable                   		  (. index = token.val.charAt(0) - 'A'; .)
+  28       WEAK "=" 								  
+  29       Expression<out value>				  (. mem[index] = value; IO.writeLine(value);.)
+  30 	 SYNC ";" )
+  31 	  | ( "print" Expression<out value>   (. IO.writeLine(value); .)
+  32 	    SYNC";" )
+  33     } EOF .
+  34 
+  35 
+  36   Expression<out int expValue>			  (. int andValue = 0; .)
+  37   = AndExp<out expValue> 
+  38   { "||" AndExp<out andValue>             (. boolean exp = (expValue == 1);
+  39 											 boolean and = (andValue == 1);
+  40 											 if ( exp || and) expValue = 1;
+  41 											 else expValue = 0;
+  42 
+  43 										  .)
+  44 
+  45   } .
+  46 
+  47   AndExp<out int andValue>				  (. int eqlValue = 0; .)
+  48   = EqlExp<out andValue>
+  49 	{ "&&" EqlExp<out eqlValue>			  (. boolean eql = (eqlValue == 1);
+  50 											 boolean and = (andValue == 1);
+  51 											if ( and && eql ) {
+  52 											andValue = 1;
+  53 
+  54 											}
+  55 											else andValue = 0;
+  56 
+  57 										  .)
+  58 	} .
+  59 
+  60   EqlExp<out int eqlValue>				   (. int relValue = 0; .)
+  61   = RelExp<out eqlValue> 
+  62   {  "==" RelExp<out relValue>			  (. if (eqlValue == relValue) eqlValue = 1;
+  63 											 else eqlValue = 0;
+  64 											 .)
+  65   | "!=" RelExp<out relValue>			  (. if (eqlValue != relValue) eqlValue = 0;
+  66 
+  67 											 else eqlValue = 0;
+  68 											 .)
+  69    } .
   70 
-  71 	| "false"							  (. factValue = 0; .)
-  72 
-  73     | "(" Expression<out factValue>
-  74       ")" .
-  75 
-  76 END Calc.
+  71   RelExp<out int relValue>				 (. int addValue = 0; .)
+  72   = AddExp<out relValue>
+  73 	{ ( "<" AddExp<out addValue>    (. if ( relValue < addValue) relValue = 1;
+  74 										else relValue = 0;
+  75 										.)
+  76 
+  77 	| "<=" AddExp<out addValue>     (. if ( relValue <= addValue) relValue = 1;
+  78 										else relValue = 0;
+  79 										.)
+  80 	| ">" AddExp<out addValue>		(. if ( relValue > addValue) relValue = 1;
+  81 										else relValue = 0;
+  82 										.)
+  83 
+  84 	| ">=" AddExp<out addValue>     (. if ( relValue >= addValue) relValue = 1;
+  85 										else relValue = 0;
+  86 										.)
+  87 					)  } .
+  88   
+  89   AddExp<out int addValue>            (. int  termValue = 0; .)
+  90   = Term<out addValue>
+  91     {   "+" Term<out termValue>           (.  addValue = addValue + termValue; .)
+  92       | "-" Term<out termValue>           (. addValue = addValue - termValue; .)
+  93 	} .
+  94 
+  95 
+  96   Term<out int termValue>                 (. int factValue = 0; .)
+  97   = Factor<out termValue>
+  98     {   "*" Factor<out factValue>         (. termValue = termValue * factValue; .)
+  99       | "/" Factor<out factValue>         (. 
+ 100 											if (factValue == 0)	SemError("Division by zero");
+ 101 											else termValue = termValue / factValue; .)
+ 102 	  | "%" Factor<out factValue>		  (. 
+ 103 												if (factValue == 0)
+ 104 													SemError("Moding by zero");
+ 105 												else termValue = termValue % factValue; 
+ 106 												.)
+ 107 
+ 108     } .
+ 109 
+ 110   Factor<out int factValue>               (. factValue = 0; .)
+ 111   =   Number                              (. try {
+ 112                                                factValue = Integer.parseInt(token.val);
+ 113                                              } catch (NumberFormatException e) {
+ 114                                                factValue = 0; SemError("number out of range");
+ 115                                              } .)
+ 116 	| Variable			                   (. int index = token.val.charAt(0) - 'A';
+ 117                                                factValue = mem[index]; .)
+ 118 	| "true"							  (. factValue = 1; .)
+ 119 
+ 120 	| "false"							  (. factValue = 0; .)
+ 121 
+ 122     | "(" Expression<out factValue>
+ 123       ")" .
+ 124 
+ 125 END Calc.
 
-1 errors detected
+0 errors detected

@@ -1,0 +1,12 @@
+ASSEM
+BEGIN
+  {    0 } DSP      0
+  {    2 } LDC      1
+  {    4 } BZE      14
+  {    6 } LDC      1
+  {    8 } PRNI    
+  {    9 } LDC      2
+  {   11 } PRNI    
+  {   12 } BRN      2
+  {   14 } HALT    
+END.
