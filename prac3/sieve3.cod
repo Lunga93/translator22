@@ -9,70 +9,70 @@ BEGIN
   {    8 } LDC_1   
   {    9 } STL_3   
   {   10 } LDC_0   
-  {   11 } STL     
-  {   12 } LDL_3   
-  {   13 } LDC      100
-  {   15 } CLE     
-  {   16 } BZE      90
-  {   18 } LDC_0   
-  {   19 } STL     
-  {   20 } LDC_2   
-  {   21 } STL_1   
-  {   22 } LDL_1   
-  {   23 } LDC      4000
-  {   25 } CLE     
-  {   26 } BZE      39
-  {   28 } LDL_0   
-  {   29 } LDL_1   
-  {   30 } LDXA    
-  {   31 } LDC_1   
-  {   32 } STO     
-  {   33 } LDA_1   
-  {   34 } INC     
-  {   35 } BRN      24
-  {   37 } LDC_2   
-  {   38 } STL_1   
-  {   39 } LDL_1   
-  {   40 } LDC      4000
-  {   42 } CLE     
-  {   43 } BZE      86
-  {   45 } LDL_0   
-  {   46 } LDL_1   
-  {   47 } LDXA    
-  {   48 } LDV     
-  {   49 } BZE      82
-  {   51 } LDL     
-  {   52 } LDC_1   
-  {   53 } ADD     
-  {   54 } STL     
-  {   55 } LDL_1   
-  {   56 } STL_2   
-  {   57 } LDL_2   
-  {   58 } LDC      4000
-  {   60 } CLE     
+  {   11 } STL      4
+  {   13 } LDL_3   
+  {   14 } LDC      100
+  {   16 } CLE     
+  {   17 } BZE      90
+  {   19 } LDC_0   
+  {   20 } STL      4
+  {   22 } LDC_2   
+  {   23 } STL_1   
+  {   24 } LDL_1   
+  {   25 } LDC      4000
+  {   27 } CLE     
+  {   28 } BZE      39
+  {   30 } LDL_0   
+  {   31 } LDL_1   
+  {   32 } LDXA    
+  {   33 } LDC_1   
+  {   34 } STO     
+  {   35 } LDA_1   
+  {   36 } INC     
+  {   37 } BRN      24
+  {   39 } LDC_2   
+  {   40 } STL_1   
+  {   41 } LDL_1   
+  {   42 } LDC      4000
+  {   44 } CLE     
+  {   45 } BZE      86
+  {   47 } LDL_0   
+  {   48 } LDL_1   
+  {   49 } LDXA    
+  {   50 } LDV     
+  {   51 } BZE      82
+  {   53 } LDL      4
+  {   55 } LDC_1   
+  {   56 } ADD     
+  {   57 } STL      4
+  {   59 } LDL_1   
+  {   60 } STL_2   
   {   61 } LDL_2   
-  {   62 } LDC_0   
-  {   63 } CGT     
-  {   64 } AND     
-  {   65 } BZE      82
-  {   67 } LDL_0   
-  {   68 } LDL_2   
-  {   69 } LDXA    
-  {   70 } LDC_0   
-  {   71 } STO     
+  {   62 } LDC      4000
+  {   64 } CLE     
+  {   65 } LDL_2   
+  {   66 } LDC_0   
+  {   67 } CGT     
+  {   68 } AND     
+  {   69 } BZE      82
+  {   71 } LDL_0   
   {   72 } LDL_2   
-  {   73 } LDL_1   
-  {   74 } ADD     
-  {   75 } STL_2   
-  {   76 } BRN      61
-  {   78 } LDA_1   
-  {   79 } INC     
-  {   80 } BRN      41
-  {   82 } LDA_3   
+  {   73 } LDXA    
+  {   74 } LDC_0   
+  {   75 } STO     
+  {   76 } LDL_2   
+  {   77 } LDL_1   
+  {   78 } ADD     
+  {   79 } STL_2   
+  {   80 } BRN      61
+  {   82 } LDA_1   
   {   83 } INC     
-  {   84 } BRN      13
-  {   86 } LDL     
-  {   87 } PRNI    
-  {   88 } PRNS     " primes"
-  {   90 } HALT    
+  {   84 } BRN      41
+  {   86 } LDA_3   
+  {   87 } INC     
+  {   88 } BRN      13
+  {   90 } LDL      4
+  {   92 } PRNI    
+  {   93 } PRNS     " primes"
+  {   95 } HALT    
 END.

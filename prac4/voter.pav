@@ -1,11 +1,11 @@
 void main () {
-  const votingAge = 18;
+  const votingAge_1 = 18;
   int age, eligible = 0, total = 0;
   bool allEligible = true;
   int[] voters = new int[100];
   read(age);
   while (age > 0) {
-    bool canVote = age > votingAge;
+    bool canVote = age > votingAge_1;
     allEligible = allEligible && canVote;
     if (canVote) {
       voters[eligible] = age;

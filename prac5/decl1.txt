@@ -1,0 +1,5 @@
+TYPE
+  Gender = (Female, Male);
+VAR
+  Age : INTEGER;
+  OppositeSex : Gender;
