@@ -173,6 +173,8 @@ import library.*;
       results.write("  " + mnemonics[cpu.ir], -8);
       switch (cpu.ir) {
         case PVM.brn:
+        case PVM.stl:
+        case PVM.ldl:
         case PVM.bze:
         case PVM.dsp:
         case PVM.lda:
@@ -278,6 +280,10 @@ import library.*;
             break;
           case PVM.ldv:           // dereference
             push(mem[pop()]);
+            break;
+          case PVM.ldl:
+            adr = cpu.fp - 1 - next();
+            if(inBounds(adr)) push(mem[adr]);
             break;
           case PVM.sto:           // store
             tos = pop(); adr = pop();
